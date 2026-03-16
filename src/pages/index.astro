@@ -1,0 +1,30 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.jsx';
+import HeroElegante from '../components/HeroElegante.jsx';
+import ScarcityOffer from '../components/ScarcityOffer.jsx';
+import MenuPremium from '../components/MenuPremium.jsx';
+import FooterUbicacion from '../components/FooterUbicacion.jsx';
+import WhatsAppButton from '../components/WhatsAppButton.jsx';
+---
+
+<html lang="es" className="scroll-smooth bg-zinc-950">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Casa Barbosa | Steakhouse Premium en Ibarra</title>
+		<meta name="description" content="Auténticas carnes ahumadas a leña y cortes exclusivos en Ibarra." />
+	</head>
+	<body className="bg-zinc-950 text-stone-100 font-sans antialiased overflow-x-hidden selection:bg-red-600/50 selection:text-white">
+		<Navbar client:load />
+		<main>
+			<HeroElegante client:load />
+			<ScarcityOffer client:visible />
+			<MenuPremium client:visible />
+		</main>
+		<FooterUbicacion client:visible />
+		<WhatsAppButton client:idle />
+	</body>
+</html>
