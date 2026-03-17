@@ -4,15 +4,15 @@ export default function WhatsAppButton() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Tooltip visible on hover */}
-      <span className="mb-2 bg-zinc-900 text-zinc-100 text-sm font-bold py-2 px-4 rounded-lg shadow-xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 pointer-events-none border border-zinc-800 hidden sm:block">
-        ¡Haz tu pedido!
+      <span className="mb-2 bg-[#040504]/90 backdrop-blur-sm text-[#EFC524] text-xs uppercase tracking-widest font-bold font-display py-2.5 px-5 rounded-lg shadow-[0_0_15px_rgba(239,197,36,0.1)] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 pointer-events-none border border-[#EFC524]/20 hidden sm:block">
+        Haz tu pedido
       </span>
       
       <a 
         href="https://wa.me/593999999999" 
         target="_blank" 
         rel="noopener noreferrer"
-        className="group relative flex items-center justify-center bg-[#25D366] text-white p-4 rounded-full shadow-2xl shadow-[#25D366]/30 hover:bg-[#128C7E] hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#25D366] focus:ring-offset-zinc-950"
+        className="group relative flex items-center justify-center bg-[#25D366] text-white p-4 rounded-full shadow-2xl shadow-[#25D366]/30 hover:bg-[#128C7E] hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#25D366] focus:ring-offset-[#040504]"
         aria-label="Contactar por WhatsApp"
       >
         <span className="absolute inset-0 rounded-full animate-ping opacity-20 bg-[#25D366]"></span>
