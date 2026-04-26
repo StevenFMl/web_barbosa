@@ -43,9 +43,6 @@ const TESTIMONIALS = [
 export default function ResenasPremium() {
   return (
     <section className="relative w-full overflow-hidden bg-[#040504] py-24 sm:py-32">
-      {/* Background glow matching the gold/yellow accent de la pagina */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-[#EFC524]/5 blur-[120px]" />
-
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         {/* Header Section alineado con los otros componentes */}
@@ -54,13 +51,13 @@ export default function ResenasPremium() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mb-16 text-center md:mb-20 flex flex-col items-center"
+          className="mb-16 text-center md:mb-20 flex flex-col items-center will-change-transform"
         >
-          <div className="flex items-center gap-4 mb-5 text-[#EFC524]">
-            <span className="h-[1px] w-12 sm:w-20 bg-gradient-to-l from-[#EFC524] to-transparent"></span>
+          <div className="flex items-center gap-4 mb-5 text-orange-500">
+            <span className="h-[1px] w-12 sm:w-20 bg-gradient-to-l from-orange-500 to-transparent"></span>
             <Star className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
             <span className="uppercase tracking-[0.3em] font-bold text-xs sm:text-sm font-display leading-none">Testimonios</span>
-            <span className="h-[1px] w-12 sm:w-20 bg-gradient-to-r from-[#EFC524] to-transparent"></span>
+            <span className="h-[1px] w-12 sm:w-20 bg-gradient-to-r from-orange-500 to-transparent"></span>
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-none mb-6 font-display uppercase">
             El Veredicto
@@ -71,30 +68,29 @@ export default function ResenasPremium() {
         </motion.div>
       </div>
 
-      {/* Infinite Carousel Container */}
-      <div className="relative flex w-full flex-col overflow-hidden py-4">
+      {/* Infinite Carousel Container Optimized */}
+      <div className="relative flex w-full flex-col overflow-hidden py-4 z-10">
         {/* Degradados en los bordes para un look fluido y elegante */}
-        <div className="absolute left-0 top-0 bottom-0 z-20 w-12 sm:w-32 bg-gradient-to-r from-[#040504] to-transparent pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 z-20 w-12 sm:w-32 bg-gradient-to-l from-[#040504] to-transparent pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 z-20 w-16 sm:w-32 bg-gradient-to-r from-[#040504] to-transparent pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 z-20 w-16 sm:w-32 bg-gradient-to-l from-[#040504] to-transparent pointer-events-none" />
 
         <motion.div
           animate={{ x: ["0%", "-50%"] }}
           transition={{
             ease: "linear",
-            duration: 35, // Velocidad del carrusel, más alto es más lento
+            duration: 40,
             repeat: Infinity,
           }}
-          className="flex w-max gap-6 sm:gap-8 px-4"
+          className="flex w-max gap-6 sm:gap-8 px-4 will-change-transform" // Crucial fix for infinite GPU lag
         >
           {/* Duplicamos el array para lograr el efecto de scroll infinito continuo */}
           {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial, index) => (
-            <motion.div
+            <div
               key={`${testimonial.id}-${index}`}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative flex w-[280px] sm:w-[360px] flex-col justify-between overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-6 sm:p-8 backdrop-blur-sm transition-all duration-300 hover:border-[#EFC524]/50 hover:shadow-[0_0_25px_rgba(239,197,36,0.15)] flex-shrink-0 cursor-grab active:cursor-grabbing"
+              className="group relative flex w-[280px] sm:w-[360px] flex-col justify-between overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-6 sm:p-8 transition-transform duration-300 hover:border-orange-500/50 flex-shrink-0 hover:-translate-y-2 hover:scale-[1.02] will-change-transform"
             >
               {/* Ícono de Comillas */}
-              <Quote className="absolute right-4 top-4 h-10 w-10 text-white/5 group-hover:text-[#EFC524]/10 transition-colors duration-500" />
+              <Quote className="absolute right-4 top-4 h-10 w-10 text-white/5 group-hover:text-orange-500/10 transition-colors duration-500" />
 
               <div>
                 {/* Estrellas */}
@@ -102,7 +98,7 @@ export default function ResenasPremium() {
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star 
                       key={i} 
-                      className="h-4 w-4 fill-[#EFC524] text-[#EFC524]"
+                      className="h-4 w-4 fill-orange-500 text-orange-500"
                     />
                   ))}
                 </div>
@@ -114,15 +110,15 @@ export default function ResenasPremium() {
               </div>
 
               {/* Autor */}
-              <div className="mt-auto flex flex-col pt-5 border-t border-white/10 group-hover:border-[#EFC524]/30 transition-colors duration-300">
+              <div className="mt-auto flex flex-col pt-5 border-t border-white/10 group-hover:border-orange-500/30 transition-colors duration-300">
                 <h4 className="font-bold text-white font-display tracking-wide text-sm sm:text-base">
                   {testimonial.name}
                 </h4>
-                <p className="mt-1 text-xs sm:text-sm tracking-widest text-[#EFC524] uppercase">
+                <p className="mt-1 text-xs sm:text-sm tracking-widest text-orange-500 uppercase">
                   {testimonial.role}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
       </div>

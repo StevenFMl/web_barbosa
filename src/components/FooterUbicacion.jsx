@@ -1,122 +1,99 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Clock, Instagram, Facebook, Flame } from 'lucide-react';
+import { MapPin, Clock, Instagram, Facebook, Flame, Phone } from 'lucide-react';
 
 export default function FooterUbicacion() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1, 
-      transition: { staggerChildren: 0.2, delayChildren: 0.2 } 
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } }
-  };
-
   return (
-    <footer id="ubicacion" className="bg-[#040504] border-t border-white/5 relative overflow-hidden">
-      {/* Texture overlay */}
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-10 pointer-events-none"></div>
+    <footer id="ubicacion" className="bg-[#040504] border-t border-white/5 relative overflow-hidden font-sans">
+      {/* Glows ambientales sutiles optimizados */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-600/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-yellow-600/5 blur-[100px] rounded-full pointer-events-none z-0"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-10">
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20"
-        >
+        
+        {/* Cabecera del Footer (Elegante y minimalista) */}
+        <div className="flex flex-col items-center justify-center mb-16 sm:mb-20 text-center">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-orange-500"></span>
+            <Flame className="w-6 h-6 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
+            <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-orange-500"></span>
+          </div>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight font-display uppercase leading-none drop-shadow-md">
+            Casa <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-500">Barbosa</span>
+          </h2>
+          <p className="mt-6 max-w-2xl text-zinc-400 text-lg font-serif italic tracking-wide">
+            "Donde el fuego lento esculpe sabores inolvidables y la carne alcanza su máxima expresión."
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-stretch">
           
-          {/* Info Section */}
-          <motion.div variants={itemVariants} className="flex flex-col justify-center relative">
+          {/* Información de Contacto y Ubicación */}
+          <div className="flex flex-col justify-center gap-8">
             
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(239,197,36,0.03),transparent_60%)] pointer-events-none"></div>
-
-            <div className="flex items-center gap-3 mb-4 relative z-10">
-              <span className="h-[1px] w-8 bg-[#EFC524]"></span>
-              <span className="uppercase tracking-[0.2em] font-medium text-xs text-[#EFC524] font-display">Encuéntranos</span>
-            </div>
-            
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 tracking-tight font-display uppercase leading-tight relative z-10">
-              El Refugio del <br />
-              <span className="text-[#EFC524] drop-shadow-[0_0_15px_rgba(239,197,36,0.2)]">Fuego en Ibarra</span>
-            </h2>
-            
-            <p className="text-zinc-400 text-lg mb-10 leading-relaxed font-light font-serif tracking-wide relative z-10">
-              El ambiente perfecto, el fuego exacto y el sabor que te hará volver. No somos solo un restaurante, somos una experiencia en torno a las brasas.
-            </p>
-            
-            <div className="space-y-4 mb-10 w-full relative z-10">
-              {/* Location Card */}
-              <motion.div 
-                whileHover={{ x: 5, backgroundColor: "rgba(255,255,255,0.03)" }}
-                className="flex items-start bg-transparent p-4 sm:p-5 rounded-2xl border border-white/5 transition-colors group"
-              >
-                <div className="bg-[#393938]/30 p-3 rounded-lg border border-white/5 group-hover:border-[#EFC524]/50 group-hover:bg-[#EFC524]/10 transition-colors duration-300">
-                  <MapPin className="w-6 h-6 text-[#EFC524] group-hover:text-white transition-colors" aria-hidden="true" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-white font-bold text-lg mb-1 tracking-wider font-display">Ubicación</h3>
-                  <p className="text-zinc-400 font-light font-serif">Av. Mariano Acosta y Gabriela Mistral<br/>Ibarra, Imbabura, EC</p>
-                </div>
-              </motion.div>
-              
-              {/* Hours Card */}
-              <motion.div 
-                whileHover={{ x: 5, backgroundColor: "rgba(255,255,255,0.03)" }}
-                className="flex items-start bg-transparent p-4 sm:p-5 rounded-2xl border border-white/5 transition-colors group"
-              >
-                <div className="bg-[#393938]/30 p-3 rounded-lg border border-white/5 group-hover:border-[#EFC524]/50 group-hover:bg-[#EFC524]/10 transition-colors duration-300">
-                  <Clock className="w-6 h-6 text-[#EFC524] group-hover:text-white transition-colors" aria-hidden="true" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-white font-bold text-lg mb-1 tracking-wider font-display">Horarios de Atención</h3>
-                  <p className="text-zinc-400 font-light flex items-center gap-2 font-serif">
-                    Jueves a Domingo <span className="text-white/20">|</span> 17:00 - 23:00
-                  </p>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Socials */}
-            <div className="relative z-10">
-              <h3 className="text-zinc-500 font-bold mb-4 uppercase tracking-[0.25em] text-xs font-display">Síguenos en las redes</h3>
-              <div className="flex gap-4">
-                <motion.a 
-                  href="#" 
-                  aria-label="Ir a Facebook de Casa Barbosa"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="h-12 w-12 bg-[#393938]/30 border border-white/10 rounded-full flex items-center justify-center text-zinc-400 hover:text-[#040504] hover:bg-[#EFC524] hover:border-[#EFC524] transition-all shadow-lg group"
-                >
-                  <Facebook className="w-5 h-5" />
-                </motion.a>
-                <motion.a 
-                  href="#" 
-                  aria-label="Ir a Instagram de Casa Barbosa"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="h-12 w-12 bg-[#393938]/30 border border-white/10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white transition-all shadow-lg group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] transition-opacity duration-300 pointer-events-none mix-blend-overlay"></div>
-                  <Instagram className="w-5 h-5 relative z-10" />
-                </motion.a>
+            <div className="group flex items-start p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/30 transition-all duration-300 hover:bg-white/[0.07] hover:-translate-y-1 will-change-transform shadow-lg">
+              <div className="bg-black/50 p-4 rounded-xl border border-white/5 group-hover:border-orange-500/50 transition-colors shrink-0 shadow-inner">
+                <MapPin className="w-7 h-7 text-orange-500 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] transition-all" />
+              </div>
+              <div className="ml-5">
+                <h3 className="text-white font-bold text-xl mb-2 tracking-widest font-display uppercase">Nuestra Casa</h3>
+                <p className="text-zinc-400 font-serif leading-relaxed text-lg">
+                  Av. Mariano Acosta y Gabriela Mistral<br/>
+                  <span className="text-zinc-500">Ibarra, Imbabura, Ecuador</span>
+                </p>
               </div>
             </div>
-          </motion.div>
+
+            <div className="group flex items-start p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/30 transition-all duration-300 hover:bg-white/[0.07] hover:-translate-y-1 will-change-transform shadow-lg">
+              <div className="bg-black/50 p-4 rounded-xl border border-white/5 group-hover:border-orange-500/50 transition-colors shrink-0 shadow-inner">
+                <Clock className="w-7 h-7 text-orange-500 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] transition-all" />
+              </div>
+              <div className="ml-5">
+                <h3 className="text-white font-bold text-xl mb-2 tracking-widest font-display uppercase">Horario de Fuegos</h3>
+                <p className="text-zinc-400 font-serif leading-relaxed text-lg">
+                  Jueves a Domingo<br/>
+                  <span className="text-orange-400 font-medium tracking-widest font-display text-sm">17:00 HRS — 23:00 HRS</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Redes Sociales y Teléfono en Layout Compacto */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-4 mt-2">
+              <a 
+                href="https://wa.me/593984180801" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex-1 w-full flex items-center justify-center gap-3 bg-gradient-to-r from-orange-600 to-yellow-600 text-black p-4 rounded-xl font-black font-display tracking-widest uppercase hover:opacity-90 transition-opacity shadow-[0_4px_20px_rgba(249,115,22,0.25)] hover:shadow-[0_4px_25px_rgba(249,115,22,0.4)]"
+              >
+                <Phone className="w-5 h-5 fill-current" /> Reservar Mesa
+              </a>
+
+              <div className="flex gap-4">
+                <a 
+                  href="#" 
+                  aria-label="Facebook"
+                  className="w-14 h-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 hover:border-orange-500/50 transition-all duration-300 group"
+                >
+                  <Facebook className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                </a>
+                <a 
+                  href="#" 
+                  aria-label="Instagram"
+                  className="relative w-14 h-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-zinc-400 hover:text-white transition-all duration-300 overflow-hidden group hover:border-transparent"
+                >
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] transition-opacity duration-300" />
+                  <Instagram className="w-6 h-6 relative z-10 group-hover:scale-110 transition-transform" />
+                </a>
+              </div>
+            </div>
+
+          </div>
           
-          {/* Elegant Map embed */}
-          <motion.div 
-            variants={itemVariants} 
-            className="h-96 lg:h-[600px] min-h-[400px] w-full rounded-3xl overflow-hidden relative z-10 shadow-2xl group border border-white/10 hover:border-[#EFC524]/40 transition-all duration-500 bg-[#393938]"
-          >
-            {/* Elegant glassmorphism floating badge over map */}
-            <div className="absolute top-4 left-4 z-20 bg-[#040504]/80 backdrop-blur-md rounded-2xl px-5 py-2.5 flex items-center gap-3 border border-white/10 shadow-[0_0_20px_rgba(239,197,36,0.1)]">
-              <Flame className="w-5 h-5 text-[#EFC524] animate-pulse" />
-              <span className="font-bold text-white text-sm tracking-widest uppercase font-display">Casa Barbosa</span>
+          {/* Mapa Elevado e Integrado (Sin animaciones pesadas de filtro constante) */}
+          <div className="h-96 lg:h-full min-h-[450px] w-full rounded-2xl overflow-hidden relative z-10 shadow-2xl border border-white/10 group bg-zinc-900 transition-colors hover:border-orange-500/40">
+            {/* Etiqueta flotante elegante */}
+            <div className="absolute top-5 right-5 z-20 bg-black/80 backdrop-blur-md rounded-full px-4 py-2 flex items-center gap-2 border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+              <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+              <span className="font-bold text-white text-xs tracking-[0.2em] font-display uppercase">Abierto Hoy</span>
             </div>
 
             <iframe 
@@ -128,22 +105,20 @@ export default function FooterUbicacion() {
               loading="lazy" 
               referrerPolicy="no-referrer-when-downgrade"
               title="Ubicación mapa Casa Barbosa en Ibarra"
-              className="w-full h-full grayscale contrast-125 brightness-75 opacity-70 group-hover:grayscale-0 group-hover:brightness-100 group-hover:opacity-100 transition-all duration-700 object-cover"
+              className="w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-500 object-cover filter contrast-[1.1]"
             ></iframe>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
         
-        {/* Copyright Footer */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-zinc-500 text-sm font-serif"
-        >
+        {/* Copyright y Firma Final */}
+        <div className="mt-24 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-zinc-500 text-sm font-serif">
           <p>&copy; {new Date().getFullYear()} Creado por Saturlink. Todos los derechos reservados.</p>
-          <p className="mt-4 md:mt-0 font-bold tracking-[0.3em] uppercase text-xs font-display text-zinc-600">Forjados al Fuego</p>
-        </motion.div>
+          <div className="mt-4 md:mt-0 flex items-center gap-2 opacity-80">
+            <span className="h-[1px] w-8 bg-zinc-700"></span>
+            <span className="font-black tracking-[0.3em] uppercase text-[10px] sm:text-xs font-display text-zinc-600">Premium Steakhouse</span>
+            <span className="h-[1px] w-8 bg-zinc-700"></span>
+          </div>
+        </div>
       </div>
     </footer>
   );

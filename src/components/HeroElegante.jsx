@@ -1,103 +1,221 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Flame } from 'lucide-react';
+import { ArrowUpRight, Flame } from 'lucide-react';
 
 export default function HeroElegante() {
+  const container = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.14,
+        delayChildren: 0.25,
+      },
+    },
+  };
+
+  const reveal = {
+    hidden: {
+      opacity: 0,
+      y: 48,
+      filter: 'blur(10px)',
+      clipPath: 'inset(0 0 100% 0)',
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      clipPath: 'inset(0 0 0% 0)',
+      transition: {
+        duration: 1.2,
+        ease: [0.25, 1, 0.5, 1],
+      },
+    },
+  };
+
+  const spring = {
+    hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      transition: { type: 'spring', stiffness: 100, damping: 20 },
+    },
+  };
+
+  const lineGrow = {
+    hidden: { scaleX: 0, opacity: 0 },
+    visible: {
+      scaleX: 1,
+      opacity: 1,
+      transition: { duration: 1.4, ease: [0.25, 1, 0.5, 1] },
+    },
+  };
+
   return (
-    <section className="relative w-full min-h-[100vh] bg-[#040504] flex flex-col items-center justify-center overflow-hidden">
-      {/* Immersive Background with slow, dynamic pulse */}
-      <div className="absolute inset-0 z-0 bg-[#040504]">
-        <img
+    <section
+      id="inicio"
+      className="relative w-full min-h-[100vh] sm:min-h-[100dvh] bg-[#040504] overflow-hidden flex items-center"
+    >
+      {/* Atmósfera viva: slow zoom infinito */}
+      <div className="absolute inset-0 z-0">
+        <motion.img
           src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1920&auto=format&fit=crop"
-          alt="Carnes premium ahumándose"
+          alt=""
+          aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="w-full h-full object-cover object-center opacity-20 grayscale brightness-75 mix-blend-luminosity scale-105"
+          initial={{ scale: 1.15, opacity: 0 }}
+          animate={{
+            scale: [1.15, 1.3, 1.15],
+            opacity: 0.42,
+          }}
+          transition={{
+            opacity: { duration: 2.2, ease: [0.25, 1, 0.5, 1] },
+            scale: {
+              duration: 28,
+              ease: 'easeInOut',
+              repeat: Infinity,
+              repeatType: 'mirror',
+            },
+          }}
+          className="w-full h-full object-cover object-center grayscale-[35%] brightness-[0.6] mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#040504] via-[#040504]/80 to-[#040504]/40"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040504]/70 via-transparent to-[#040504]/70"></div>
-        
-        {/* Dynamic ambient glow */}
-        <motion.div 
-          animate={{ opacity: [0.1, 0.2, 0.1], scale: [1, 1.05, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,197,36,0.1)_0%,transparent_60%)] pointer-events-none"
+
+        {/* Vignette asimétrico — peso visual al lado del texto */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#040504] via-[#040504]/55 to-[#040504]/85" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#040504] via-transparent to-[#040504]/70" />
+
+        {/* Glow ambiental fuera de centro */}
+        <div className="absolute top-1/3 -left-[10%] w-[60vw] h-[60vw] bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.18)_0%,transparent_55%)] pointer-events-none blur-[100px]" />
+
+        {/* Grano fílmico */}
+        <div
+          className="absolute inset-0 opacity-[0.08] mix-blend-overlay pointer-events-none"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          }}
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center mt-16 sm:mt-0">
-        
-        {/* Antigravity Badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8 }}
-          className="mb-8"
-        >
-          <div className="inline-flex items-center space-x-3 bg-zinc-900/40 border border-[#EFC524]/20 rounded-full px-6 py-2.5 backdrop-blur-md shadow-[0_0_20px_rgba(239,197,36,0.05)] transition-all duration-500 hover:border-[#EFC524]/50 hover:bg-[#EFC524]/5">
-            <Flame className="w-5 h-5 text-[#EFC524] animate-pulse" aria-hidden="true" />
-            <span className="text-zinc-300 font-medium tracking-[0.3em] uppercase text-xs sm:text-sm font-display">
-              Premium Steakhouse en Ibarra
+      {/* Marca lateral vertical */}
+      <motion.div
+        initial={{ opacity: 0, x: -12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1.3, duration: 1, ease: [0.25, 1, 0.5, 1] }}
+        className="hidden lg:flex absolute left-8 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-6"
+      >
+        <span className="text-[10px] tracking-[0.45em] text-zinc-500 uppercase [writing-mode:vertical-rl] rotate-180 font-display">
+          Est. Ibarra · Premium Cuts
+        </span>
+        <span className="w-px h-24 bg-gradient-to-b from-orange-500/60 to-transparent" />
+      </motion.div>
+
+      {/* Capítulo — esquina superior derecha */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
+        className="hidden md:flex absolute top-28 right-8 lg:right-16 z-20 items-center gap-4 text-zinc-500"
+      >
+        <span className="text-[10px] tracking-[0.4em] uppercase font-display">Capítulo</span>
+        <span className="text-xs tracking-[0.3em] font-display text-orange-400">01 / 04</span>
+      </motion.div>
+
+      {/* Layout asimétrico — anclado a la izquierda */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 w-full max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-24 pt-28 pb-20 sm:pt-32 sm:pb-24"
+      >
+        {/* Badge */}
+        <motion.div variants={spring} className="mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-3 border border-orange-500/25 bg-white/[0.03] backdrop-blur-md rounded-full pl-3 pr-5 py-2">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-500/15">
+              <Flame className="w-3.5 h-3.5 text-orange-400" aria-hidden="true" />
+            </span>
+            <span className="text-[10px] sm:text-[11px] tracking-[0.4em] text-orange-300/90 uppercase font-display">
+              Steakhouse · Leña Lenta
             </span>
           </div>
         </motion.div>
 
-        {/* Majestic Antigravity Title (Refined float) */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 1, delay: 0.1, ease: 'easeOut' }}
-          className="relative will-change-transform"
+        {/* Título brutalista — tracking ajustado, masivo */}
+        <motion.h1
+          variants={reveal}
+          className="font-display font-black uppercase text-white leading-[0.86] tracking-[-0.045em] text-[clamp(3.5rem,11vw,12rem)] max-w-[14ch]"
         >
-          <motion.h1
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-            className="text-[4rem] sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tight leading-[1.1] mb-6 font-display uppercase drop-shadow-2xl text-white will-change-transform"
-          >
-            CASA <span className="text-[#EFC524] relative inline-block">
-              BARBOSA
-              <div className="absolute inset-0 blur-[40px] bg-[#EFC524]/20 -z-10"></div>
-            </span>
-          </motion.h1>
-        </motion.div>
+          <span className="block">Donde hay</span>
+          <span className="block text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-orange-500 to-amber-600 italic font-serif tracking-[-0.02em]">
+            humo,
+          </span>
+          <span className="block">hay carne.</span>
+        </motion.h1>
 
-        {/* Elegant Subtitle - Cleaned Typography */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="max-w-3xl text-lg sm:text-xl md:text-2xl text-zinc-300 mx-auto mb-12 font-serif leading-relaxed tracking-wide"
-        >
-          Cortes premium seleccionados, fuego lento a la leña y una atmósfera inigualable. La auténtica experiencia.
-        </motion.p>
+        {/* Línea + subtítulo + CTA */}
+        <div className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-end">
+          <motion.div variants={lineGrow} className="hidden md:block md:col-span-2 origin-left">
+            <span className="block h-px w-full bg-gradient-to-r from-orange-500 to-transparent" />
+          </motion.div>
 
-        {/* Magnetic CTA Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-        >
-          <motion.a
-            href="https://wa.me/593999999999"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Reservar mesa o pedir por WhatsApp"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="group relative inline-flex items-center justify-center px-8 sm:px-12 py-4 sm:py-5 text-base sm:text-xl font-bold text-[#040504] transition-all duration-300 bg-[#EFC524] border border-[#EFC524] rounded-full hover:bg-white hover:text-[#040504] hover:shadow-[0_0_40px_rgba(239,197,36,0.4)] overflow-hidden font-display tracking-widest will-change-transform"
+          {/* Subtítulo: tracking amplio, aire entre letras */}
+          <motion.p
+            variants={reveal}
+            className="md:col-span-6 text-zinc-300/90 text-sm sm:text-base font-light leading-[1.9] tracking-[0.2em] uppercase font-display max-w-xl"
           >
-            <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-all duration-300"></div>
-            <span className="relative flex items-center gap-3">
-              Reserva tu Mesa
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1.5 transition-transform duration-300" />
-            </span>
-          </motion.a>
+            Cortes seleccionados, fuego lento a la leña y una mesa que recuerda. La experiencia{' '}
+            <span className="text-white">Casa Barbosa</span> no se explica — se prueba.
+          </motion.p>
+
+          {/* CTA — esquina inferior derecha del bloque */}
+          <motion.div variants={spring} className="md:col-span-4 flex md:justify-end">
+            <a
+              href="https://wa.me/593984180801?text=Hola%20Casa%20Barbosa!%20Quiero%20hacer%20una%20reserva."
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Reservar mesa por WhatsApp"
+              className="group relative inline-flex items-center gap-5 pl-7 pr-3 py-3 rounded-full bg-white text-black font-display font-bold tracking-[0.25em] uppercase text-xs sm:text-sm overflow-hidden transition-[padding,transform] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] hover:pl-9 active:scale-[0.98]"
+            >
+              <span className="relative z-10">Reserva tu mesa</span>
+              <span className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-black text-white transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:rotate-45">
+                <ArrowUpRight className="w-4 h-4" />
+              </span>
+              <span
+                className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                aria-hidden="true"
+              />
+            </a>
+          </motion.div>
+        </div>
+
+        {/* Meta-info inferior — estilo agencia */}
+        <motion.div
+          variants={spring}
+          className="mt-16 sm:mt-24 flex flex-wrap items-center gap-x-10 gap-y-3 text-[10px] sm:text-[11px] tracking-[0.4em] uppercase text-zinc-500 font-display"
+        >
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+            Reserva en Vivo
+          </span>
+          <span>Mar — Dom · 12:30 / 22:00</span>
+          <span className="hidden sm:inline">Ibarra · Ecuador</span>
         </motion.div>
-      </div>
+      </motion.div>
+
+      {/* Indicador scroll */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.7, duration: 1 }}
+        className="hidden md:flex absolute bottom-10 right-8 lg:right-20 z-20 items-center gap-3"
+      >
+        <span className="text-[10px] tracking-[0.4em] uppercase text-zinc-500 font-display">Scroll</span>
+        <motion.span
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+          className="block w-px h-8 bg-gradient-to-b from-orange-500 to-transparent"
+        />
+      </motion.div>
     </section>
   );
 }
