@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BadgeCheck, Beef, Flame } from 'lucide-react';
+import { Beef, Flame } from 'lucide-react';
 
 const menuItems = [
   {
@@ -50,111 +50,172 @@ export default function MenuPremium() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+      transition: { staggerChildren: 0.22, delayChildren: 0.05 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 30 },
+    hidden: { opacity: 0, y: 80 },
     visible: {
       opacity: 1,
-      scale: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] }
+    }
+  };
+
+  const headerVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1, ease: [0.16, 1, 0.3, 1] }
     }
   };
 
   return (
-    <section id="menu" className="py-24 sm:py-32 bg-[#040504] relative overflow-hidden">
-      {/* Ambient static glow directly optimized avoiding blur overlapping UI elements unnecessarily */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-600/5 blur-[100px] rounded-full pointer-events-none z-0"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-800/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+    <section id="menu" className="py-32 sm:py-48 bg-[#040504] relative overflow-hidden">
+      {/* Ambient atmospheric glow */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-600/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-red-800/5 blur-[140px] rounded-full pointer-events-none z-0"></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
 
-        {/* Section Header */}
+        {/* Editorial Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16 sm:mb-24 flex flex-col items-center will-change-transform"
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          className="mb-28 sm:mb-40"
         >
-          <div className="flex items-center gap-4 mb-5 text-orange-500">
-            <span className="h-[2px] w-12 sm:w-20 bg-gradient-to-l from-orange-500 to-transparent"></span>
-            <Beef className="w-6 h-6 sm:w-8 sm:h-8" />
-            <span className="uppercase tracking-[0.3em] font-bold text-xs sm:text-sm font-display leading-none">Cortes Magistrales</span>
-            <span className="h-[2px] w-12 sm:w-20 bg-gradient-to-r from-orange-500 to-transparent"></span>
+          <div className="flex items-center gap-6 mb-10 text-orange-500">
+            <span className="h-px w-16 sm:w-24 bg-orange-500/60"></span>
+            <Beef className="w-5 h-5" strokeWidth={1.5} />
+            <span className="uppercase tracking-[0.4em] font-bold text-[11px] sm:text-xs font-display">El Compendio</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-none mb-6 font-display uppercase drop-shadow-md">
-            Menú de <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">Autor</span>
+
+          <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[9rem] font-black text-white tracking-tighter leading-[0.85] font-display uppercase mb-12">
+            Cortes
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400 italic font-serif font-light tracking-tight normal-case">de autor</span>
           </h2>
-          <p className="max-w-2xl text-zinc-400 text-lg sm:text-xl font-light font-serif leading-relaxed tracking-wide">
-            Cada plato es una obra de arte concebida sobre las brasas. Exigimos la máxima calidad en nuestros cortes.
-          </p>
+
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 border-t border-white/5 pt-10">
+            <p className="max-w-xl text-zinc-400 text-lg sm:text-xl font-light font-serif leading-relaxed">
+              Cada plato es una declaración. Una conversación silenciosa entre el fuego, el tiempo y la materia prima escogida con obsesión.
+            </p>
+            <span className="text-zinc-600 text-xs uppercase tracking-[0.4em] font-display whitespace-nowrap">
+              {String(menuItems.length).padStart(2, '0')} / Especialidades
+            </span>
+          </div>
         </motion.div>
 
-        {/* Menu Grid - Staggered Entrance */}
+        {/* Editorial Menu List — staggered scroll reveal */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1, margin: "-50px" }}
+          viewport={{ once: true, amount: 0.05 }}
+          className="border-t border-white/5"
         >
-          {menuItems.map((item) => (
-            <motion.div
-              key={item.id}
-              variants={itemVariants}
-              className="group h-full will-change-transform"
-            >
-              {/* Refactored to pure CSS transition instead of Framer Motion hover states = MASSIVE performance gain */}
-              <div
-                className="h-full rounded-2xl overflow-hidden bg-white/5 border border-white/10 hover:border-orange-500/50 hover:shadow-[0_10px_30px_rgba(249,115,22,0.1)] transition-all duration-300 flex flex-col will-change-transform relative hover:-translate-y-2 hover:scale-[1.01]"
+          {menuItems.map((item, idx) => {
+            const isReversed = idx % 2 === 1;
+            return (
+              <motion.article
+                key={item.id}
+                variants={itemVariants}
+                className="group border-b border-white/5 py-16 sm:py-24 lg:py-32 will-change-transform"
               >
-                {/* Image Container */}
-                <div className="h-64 sm:h-72 w-full relative overflow-hidden bg-[#040504]">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    loading="lazy"
-                    decoding="async"
-                    width="800"
-                    height="600"
-                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out opacity-90 group-hover:opacity-100 will-change-transform"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#040504] via-[#040504]/20 to-transparent"></div>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
 
-                  {item.popular && (
-                    <div className="absolute top-5 left-5 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black py-1.5 px-4 rounded-full text-[10px] sm:text-xs uppercase tracking-widest flex items-center gap-1.5 shadow-md font-display">
-                      <Flame className="w-3 h-3 sm:w-4 sm:h-4" /> Favorito
+                  {/* Image — slow infinite organic zoom */}
+                  <div className={`lg:col-span-5 ${isReversed ? 'lg:order-2' : 'lg:order-1'}`}>
+                    <div className="relative overflow-hidden aspect-[4/5] sm:aspect-[5/6] bg-[#0a0a0a]">
+                      <motion.img
+                        src={item.image}
+                        alt={item.name}
+                        loading="lazy"
+                        decoding="async"
+                        width="800"
+                        height="1000"
+                        className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-[filter] duration-[1200ms] ease-out will-change-transform"
+                        animate={{ scale: [1, 1.08, 1] }}
+                        transition={{
+                          duration: 22,
+                          ease: 'easeInOut',
+                          repeat: Infinity,
+                          repeatType: 'loop'
+                        }}
+                      />
+                      {/* Index marker */}
+                      <div className="absolute top-6 left-6 text-white/70 text-[11px] uppercase tracking-[0.4em] font-display mix-blend-difference">
+                        № {String(idx + 1).padStart(2, '0')}
+                      </div>
+                      {/* Subtle vignette */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#040504]/40 via-transparent to-transparent pointer-events-none"></div>
                     </div>
-                  )}
-
-                  <div className="absolute top-5 right-5 bg-[#040504]/80 backdrop-blur-sm border border-orange-500/30 text-orange-400 font-bold py-1.5 px-4 sm:px-5 rounded-full shadow-md text-sm sm:text-base group-hover:border-orange-500 group-hover:text-orange-300 transition-colors font-display tracking-wider">
-                    {item.price}
                   </div>
-                </div>
 
-                {/* Content Container */}
-                <div className="p-6 sm:p-8 flex-grow flex flex-col justify-between relative bg-transparent">
-                  <div className="relative z-10">
-                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-yellow-300 transition-colors flex items-center justify-between font-display leading-tight">
+                  {/* Content */}
+                  <div className={`lg:col-span-7 ${isReversed ? 'lg:order-1 lg:pr-4' : 'lg:order-2 lg:pl-4'}`}>
+
+                    {/* Meta row */}
+                    <div className="flex items-center gap-4 mb-8">
+                      <span className="h-px w-10 bg-white/20"></span>
+                      {item.popular ? (
+                        <span className="flex items-center gap-2 text-orange-400 uppercase tracking-[0.4em] text-[11px] font-display font-bold">
+                          <Flame className="w-3.5 h-3.5" strokeWidth={2} />
+                          Insignia de la casa
+                        </span>
+                      ) : (
+                        <span className="text-zinc-500 uppercase tracking-[0.4em] text-[11px] font-display">
+                          Especialidad
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Title — silky color transition on hover */}
+                    <h3 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white tracking-tight leading-[0.95] font-display uppercase mb-8 transition-colors duration-[900ms] ease-out group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-orange-300 group-hover:via-amber-200 group-hover:to-yellow-300">
                       {item.name}
-                      <BadgeCheck className="w-5 h-5 sm:w-6 sm:h-6 text-zinc-600 group-hover:text-orange-400 transition-colors duration-300 flex-shrink-0 ml-2" />
                     </h3>
 
-                    <div className="h-[2px] w-12 bg-white/10 mb-5 group-hover:w-20 group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-yellow-500 transition-all duration-500 ease-out"></div>
-
-                    <p className="text-zinc-400 text-base leading-relaxed font-light font-serif">
+                    {/* Description */}
+                    <p className="text-zinc-400 text-base sm:text-lg font-light font-serif leading-relaxed max-w-xl mb-12">
                       {item.description}
                     </p>
+
+                    {/* Price row — brutalist baseline */}
+                    <div className="flex items-baseline justify-between gap-6 pt-8 border-t border-white/5">
+                      <span className="text-zinc-600 text-[11px] uppercase tracking-[0.4em] font-display">
+                        Desde
+                      </span>
+                      <span className="text-4xl sm:text-5xl font-black text-white font-display tracking-tight transition-colors duration-[900ms] ease-out group-hover:text-orange-400">
+                        {item.price}
+                      </span>
+                    </div>
+
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.article>
+            );
+          })}
         </motion.div>
+
+        {/* Editorial Footer mark */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="mt-32 sm:mt-40 text-center"
+        >
+          <div className="inline-flex items-center gap-5 text-zinc-600">
+            <span className="h-px w-16 bg-white/10"></span>
+            <span className="uppercase tracking-[0.5em] text-[11px] font-display">Fin del compendio</span>
+            <span className="h-px w-16 bg-white/10"></span>
+          </div>
+        </motion.div>
+
       </div>
     </section>
   );

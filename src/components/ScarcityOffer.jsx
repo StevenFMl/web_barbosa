@@ -1,55 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ShieldAlert, Loader2, Ban, Flame } from 'lucide-react';
+import { Loader2, Ban } from 'lucide-react';
 
-// URL ÚNICA para todo: leer datos en tiempo real y reclamar el cupón
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGysZWAkQnlxtkx01JLshZZJvr57wIvJQsfQ-_8fD9y2wB1-xiuCE0U2ynNY4aWgO0/exec';
 
-// Particles for "brasas" effect (sparks/embers) - EXTREMELY OPTIMIZED
-const Sparks = () => {
-  const [sparks, setSparks] = useState([]);
+// Brasas mínimas: pocas partículas, ámbar tenue, movimiento lento
+const Embers = () => {
+  const [embers, setEmbers] = useState([]);
 
   useEffect(() => {
-    // Fewer sparks (6), much less JS animation overhead
-    setSparks(Array.from({ length: 6 }).map((_, i) => ({
+    setEmbers(Array.from({ length: 5 }).map((_, i) => ({
       id: i,
-      size: Math.random() * 3 + 2,
-      left: `${Math.random() * 100}%`,
-      duration: Math.random() * 3 + 3, // slightly slower
-      delay: Math.random() * 3,
-      initialX: (Math.random() - 0.5) * 20,
-      targetY: -200 - Math.random() * 150, // shorter travel distance
+      size: Math.random() * 2 + 1.5,
+      left: `${15 + Math.random() * 70}%`,
+      duration: Math.random() * 4 + 5,
+      delay: Math.random() * 4,
+      drift: (Math.random() - 0.5) * 25,
     })));
   }, []);
 
-  if (sparks.length === 0) return null;
+  if (embers.length === 0) return null;
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 mt-10">
-      {sparks.map((spark) => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {embers.map((ember) => (
         <motion.div
-          key={spark.id}
-          className="absolute -bottom-10 rounded-full bg-orange-400"
+          key={ember.id}
+          className="absolute -bottom-4 rounded-full bg-amber-500/60"
           style={{
-            width: spark.size,
-            height: spark.size,
-            left: spark.left,
-            willChange: 'transform, opacity' // strict GPU pass
+            width: ember.size,
+            height: ember.size,
+            left: ember.left,
+            filter: 'blur(0.5px)',
+            willChange: 'transform, opacity',
           }}
           animate={{
-            y: [0, spark.targetY],
-            x: [
-              spark.initialX,
-              spark.initialX + (Math.random() * 30 - 15),
-              spark.initialX + (Math.random() * 30 - 15)
-            ],
-            opacity: [0, 0.6, 0] // reduced opacity for subtle effect
+            y: [0, -180],
+            x: [0, ember.drift],
+            opacity: [0, 0.5, 0],
           }}
           transition={{
-            duration: spark.duration,
-            delay: spark.delay,
+            duration: ember.duration,
+            delay: ember.delay,
             repeat: Infinity,
-            ease: "linear" // linear is cheaper than easeOut on JS loops
+            ease: 'linear',
           }}
         />
       ))}
@@ -57,13 +51,20 @@ const Sparks = () => {
   );
 };
 
+// Indicador de pulso intermitente (ping suave) — color brasa
+const PulseDot = () => (
+  <span className="relative flex h-2 w-2 shrink-0">
+    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500/70 opacity-75" />
+    <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
+  </span>
+);
+
 export default function ScarcityOffer() {
   const [offerData, setOfferData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dataKey, setDataKey] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Cargamos la información en TIEMPO REAL directamente desde el Script
   const fetchOfferData = async () => {
     try {
       const response = await fetch(`${SCRIPT_URL}?t=${new Date().getTime()}`);
@@ -85,7 +86,7 @@ export default function ScarcityOffer() {
             titulo: data.titulo,
             descripcion: data.descripcion,
             cupos_totales: Math.max(1, data.totales),
-            cupos_restantes: Math.max(0, data.restantes)
+            cupos_restantes: Math.max(0, data.restantes),
           };
         });
       }
@@ -96,7 +97,7 @@ export default function ScarcityOffer() {
           titulo: 'Mesa Premium',
           descripcion: 'Por favor intenta más tarde.',
           cupos_totales: 1,
-          cupos_restantes: 0
+          cupos_restantes: 0,
         });
       }
     } finally {
@@ -106,7 +107,6 @@ export default function ScarcityOffer() {
 
   useEffect(() => {
     fetchOfferData();
-    // Actualiza los datos cada 30 segundos
     const intervalId = setInterval(fetchOfferData, 30000);
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +125,7 @@ export default function ScarcityOffer() {
       try {
         result = JSON.parse(textResponse);
       } catch (err) {
-        throw new Error("Google no devolvió un JSON válido al intentar reclamar.");
+        throw new Error('Google no devolvió un JSON válido al intentar reclamar.');
       }
 
       if (result.success) {
@@ -140,12 +140,12 @@ export default function ScarcityOffer() {
         setOfferData(prev => ({ ...prev, cupos_restantes: result.restantes }));
         window.open(whatsappUrl, '_blank');
       } else {
-        alert("Lo sentimos, los cupones se acaban de agotar.");
+        alert('Lo sentimos, los cupones se acaban de agotar.');
         fetchOfferData();
       }
     } catch (error) {
-      console.error("Error detallado en flujo de reclamo:", error);
-      alert("Hubo un error al generar tu cupón único. Por favor, intenta de nuevo.");
+      console.error('Error detallado en flujo de reclamo:', error);
+      alert('Hubo un error al generar tu cupón único. Por favor, intenta de nuevo.');
     } finally {
       setIsUpdating(false);
     }
@@ -153,10 +153,8 @@ export default function ScarcityOffer() {
 
   if (loading) {
     return (
-      <div className="w-full bg-[#040504] py-16 flex justify-center items-center min-h-[250px] will-change-transform">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}>
-          <Loader2 className="w-10 h-10 text-orange-500" />
-        </motion.div>
+      <div className="w-full bg-[#070707] py-20 flex justify-center items-center min-h-[300px]">
+        <Loader2 className="w-6 h-6 text-amber-500/70 animate-spin" />
       </div>
     );
   }
@@ -164,89 +162,124 @@ export default function ScarcityOffer() {
   const { titulo, descripcion, cupos_totales, cupos_restantes } = offerData;
   const isSoldOut = cupos_restantes <= 0;
   const progressPercentage = isSoldOut ? 0 : (cupos_restantes / cupos_totales) * 100;
+  const paddedRestantes = String(cupos_restantes).padStart(2, '0');
+  const paddedTotales = String(cupos_totales).padStart(2, '0');
 
   return (
-    <section className="w-full bg-[#040504] py-16 px-4 sm:px-6 flex justify-center items-center relative overflow-hidden border-y border-white/5 font-sans">
-      {/* Background glow & embers */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl h-64 bg-orange-600/5 blur-[120px] pointer-events-none rounded-full"></div>
-      {!isSoldOut && <Sparks />}
+    <section className="relative w-full bg-[#070707] py-20 sm:py-28 px-4 sm:px-6 flex justify-center items-center overflow-hidden border-y border-white/[0.04]">
+      {/* Resplandor radial de brasas — capa cálida oscura */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(180, 60, 20, 0.18) 0%, rgba(120, 30, 10, 0.08) 35%, transparent 70%)',
+        }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 30% 25% at 50% 60%, rgba(251, 146, 60, 0.10) 0%, transparent 60%)',
+        }}
+      />
+
+      {/* Brasas suspendidas */}
+      {!isSoldOut && <Embers />}
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 30 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-5xl w-full relative z-10 bg-[#121212]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 shadow-xl overflow-hidden group will-change-transform"
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 max-w-5xl w-full grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-12 lg:gap-20 items-center"
       >
-        <div className="flex-1 flex flex-col md:flex-row items-center md:items-start gap-5 md:gap-7 text-center md:text-left z-10">
-          <div className={`hidden sm:flex shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${isSoldOut ? 'from-zinc-800 to-zinc-900 border-zinc-700' : 'from-orange-600/20 to-red-900/40 border-orange-500/30'} border items-center justify-center shadow-md transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 will-change-transform`}>
-            <Flame className={`w-8 h-8 sm:w-10 sm:h-10 ${isSoldOut ? 'text-zinc-600' : 'text-orange-500'}`} />
+        {/* Columna izquierda — mensaje */}
+        <div className="flex flex-col items-start text-left">
+          <div className="flex items-center gap-3 mb-8">
+            {!isSoldOut && <PulseDot />}
+            <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-amber-200/70">
+              {isSoldOut ? '// Reserva completada' : '// Disponibilidad limitada'}
+            </span>
           </div>
 
-          <div className="flex-1 flex flex-col items-center md:items-start">
-            <div className="flex items-center gap-2 mb-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-              <Star className={`w-3.5 h-3.5 ${isSoldOut ? 'text-zinc-500' : 'text-orange-400 fill-orange-400'}`} />
-              <span className={`font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs font-display ${isSoldOut ? 'text-zinc-500' : 'text-orange-400'}`}>
-                {isSoldOut ? 'Reserva Completada' : 'Experiencia Exclusiva'}
-              </span>
-            </div>
+          <h2 className="font-sans font-extralight text-3xl sm:text-4xl lg:text-5xl leading-[1.1] tracking-tight text-white/95 mb-6">
+            {isSoldOut ? (
+              <span className="text-zinc-500">Cupones agotados</span>
+            ) : (
+              <>
+                {titulo}
+                <span className="block mt-2 text-amber-200/40 font-extralight italic text-2xl sm:text-3xl lg:text-4xl">
+                  para esta velada.
+                </span>
+              </>
+            )}
+          </h2>
 
-            <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight font-display tracking-wide uppercase ${isSoldOut ? 'text-zinc-600' : 'text-transparent bg-clip-text bg-gradient-to-r from-white via-orange-100 to-orange-200'}`}>
-              {isSoldOut ? 'Cupones Agotados' : titulo}
-            </h2>
-
-            <p className={`text-base sm:text-lg max-w-lg leading-relaxed font-serif ${isSoldOut ? 'text-zinc-600' : 'text-zinc-300'}`}>
-              {isSoldOut ? 'Mantente atento a nuestras redes sociales para la próxima velada exclusiva.' : descripcion}
-            </p>
-          </div>
+          <p className="font-sans font-light text-sm sm:text-base text-zinc-400 leading-relaxed max-w-md">
+            {isSoldOut
+              ? 'Mantente atento a nuestras redes sociales para la próxima velada exclusiva.'
+              : descripcion}
+          </p>
         </div>
 
-        <div className="w-full lg:w-[400px] shrink-0 flex flex-col gap-6 z-10">
+        {/* Columna derecha — datos técnicos + acción */}
+        <div className="w-full flex flex-col gap-8">
           <AnimatePresence mode="wait">
             {!isSoldOut ? (
               <motion.div
                 key={`active-${dataKey}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4 }}
-                className="w-full bg-black/60 border border-white/10 rounded-xl p-6 sm:p-7 flex flex-col gap-5 shadow-inner relative overflow-hidden will-change-transform"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-5"
               >
-                {/* Reflejo superior estático */}
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-orange-500/40 to-transparent"></div>
-
-                <div className="flex justify-between items-end">
-                  <span className="text-zinc-400 font-medium flex items-center gap-2 text-xs sm:text-sm uppercase tracking-widest font-display">
-                    <ShieldAlert className="w-4 h-4 text-orange-500" />
-                    Cupos Restantes
-                  </span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="font-black text-4xl leading-none font-display text-orange-500 drop-shadow-sm">
-                      {cupos_restantes}
-                    </span>
-                    <span className="text-zinc-500 text-sm font-medium font-display uppercase tracking-widest">/ {cupos_totales}</span>
-                  </div>
+                {/* Etiqueta técnica */}
+                <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-zinc-500">
+                  <span>Mesas&nbsp;disponibles</span>
+                  <span className="text-zinc-600">en&nbsp;tiempo&nbsp;real</span>
                 </div>
 
-                <div className="w-full h-3 bg-zinc-800 rounded-full overflow-hidden shadow-inner relative border border-white/5">
+                {/* Contador monoespaciado masivo */}
+                <div className="flex items-baseline gap-3 border-b border-white/[0.06] pb-5">
+                  <motion.span
+                    key={paddedRestantes}
+                    initial={{ opacity: 0.4 }}
+                    animate={{ opacity: [0.4, 1, 0.92, 1] }}
+                    transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                    className="font-mono font-light text-6xl sm:text-7xl text-amber-100 tabular-nums leading-none tracking-tighter"
+                    style={{ textShadow: '0 0 24px rgba(251, 191, 36, 0.25)' }}
+                  >
+                    {paddedRestantes}
+                  </motion.span>
+                  <span className="font-mono text-zinc-600 text-2xl sm:text-3xl tabular-nums">
+                    /&nbsp;{paddedTotales}
+                  </span>
+                </div>
+
+                {/* Barra de progreso fina y técnica */}
+                <div className="w-full h-[2px] bg-white/[0.06] overflow-hidden relative">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercentage}%` }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="h-full rounded-full relative bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400"
-                    style={{ willChange: "width" }}
-                  >
-                  </motion.div>
+                    transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="h-full bg-gradient-to-r from-amber-700 via-amber-500 to-amber-300"
+                    style={{ willChange: 'width' }}
+                  />
                 </div>
               </motion.div>
             ) : (
               <motion.div
                 key="soldout"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="w-full bg-black/40 border border-zinc-800 rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-zinc-600 text-center will-change-transform"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-4 border border-zinc-800/60 px-6 py-8 text-zinc-500"
               >
-                <Ban className="w-12 h-12 opacity-50 shrink-0" />
-                <span className="font-bold text-sm tracking-widest uppercase font-display leading-tight">La experiencia ya no está disponible.</span>
+                <Ban className="w-5 h-5 opacity-60 shrink-0" />
+                <span className="font-mono text-[11px] uppercase tracking-[0.3em]">
+                  Experiencia&nbsp;no&nbsp;disponible
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -255,16 +288,26 @@ export default function ScarcityOffer() {
             <button
               onClick={handleClaim}
               disabled={isUpdating}
-              className="group relative flex items-center justify-center overflow-hidden w-full py-4 sm:py-5 text-sm sm:text-base font-black text-black bg-gradient-to-r from-orange-500 to-yellow-500 rounded-xl shadow-[0_4px_15px_rgba(249,115,22,0.3)] hover:shadow-[0_8px_25px_rgba(249,115,22,0.5)] transition-all duration-300 disabled:opacity-75 disabled:cursor-wait font-display tracking-widest z-20 hover:scale-[1.02] active:scale-95 will-change-transform"
+              className="group relative w-full py-5 overflow-hidden border border-amber-500/30 hover:border-amber-400/70 bg-gradient-to-b from-amber-950/20 to-black/40 hover:from-amber-900/30 hover:to-amber-950/40 transition-all duration-500 disabled:opacity-60 disabled:cursor-wait"
             >
-              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-
-              <span className="relative z-10 flex items-center gap-2">
+              {/* Resplandor interior */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{
+                  background: 'radial-gradient(ellipse at center, rgba(251, 191, 36, 0.15) 0%, transparent 70%)',
+                }}
+              />
+              <span className="relative z-10 flex items-center justify-center gap-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.4em] text-amber-100">
                 {isUpdating ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" /> PROCESANDO...
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Procesando
                   </>
-                ) : 'RECLAMAR CUPÓN AHORA'}
+                ) : (
+                  <>
+                    Reclamar&nbsp;cupón
+                    <span className="text-amber-400/60 group-hover:translate-x-1 transition-transform duration-500">→</span>
+                  </>
+                )}
               </span>
             </button>
           )}
