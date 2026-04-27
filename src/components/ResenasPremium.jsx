@@ -39,6 +39,49 @@ const TESTIMONIALS = [
   }
 ];
 
+const GALLERY_IMAGES = [
+  {
+    id: 1,
+    src: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=1200&q=80",
+    alt: "Corte de carne premium a la parrilla",
+  },
+  {
+    id: 2,
+    src: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+    alt: "Bistec sellado al fuego",
+  },
+  {
+    id: 3,
+    src: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80",
+    alt: "Restaurante de ambiente oscuro",
+  },
+  {
+    id: 4,
+    src: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=1200&q=80",
+    alt: "Llamas sobre la parrilla",
+  },
+  {
+    id: 5,
+    src: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=1200&q=80",
+    alt: "Costillas ahumadas",
+  },
+  {
+    id: 6,
+    src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+    alt: "Mesa de restaurante con luz tenue",
+  },
+  {
+    id: 7,
+    src: "https://images.unsplash.com/photo-1432139509613-5c4255815697?auto=format&fit=crop&w=1200&q=80",
+    alt: "Brasas encendidas",
+  },
+  {
+    id: 8,
+    src: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=80",
+    alt: "Plato servido en restaurante",
+  },
+];
+
 export default function ResenasPremium() {
   return (
     <section className="relative w-full overflow-hidden bg-[#040504] py-16 sm:py-20">
@@ -110,6 +153,36 @@ export default function ResenasPremium() {
                   {testimonial.role}
                 </p>
               </div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      <div className="relative mt-12 flex w-full flex-col overflow-hidden sm:mt-16 z-10">
+        <div className="absolute left-0 top-0 bottom-0 z-20 w-16 sm:w-32 bg-gradient-to-r from-[#040504] to-transparent pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 z-20 w-16 sm:w-32 bg-gradient-to-l from-[#040504] to-transparent pointer-events-none" />
+
+        <motion.div
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{
+            ease: "linear",
+            duration: 30,
+            repeat: Infinity,
+          }}
+          className="flex w-max gap-4 px-2 will-change-transform"
+        >
+          {[...GALLERY_IMAGES, ...GALLERY_IMAGES].map((image, index) => (
+            <div
+              key={`${image.id}-${index}`}
+              className="group relative aspect-video w-[280px] sm:w-[420px] md:w-[480px] flex-shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                loading="lazy"
+                className="h-full w-full object-cover grayscale-[50%] transition-all duration-700 ease-out group-hover:grayscale-0 group-hover:scale-105"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-40" />
             </div>
           ))}
         </motion.div>

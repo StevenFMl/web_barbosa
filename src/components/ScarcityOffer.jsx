@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Ban } from 'lucide-react';
+import { Loader2, Ticket } from 'lucide-react';
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGysZWAkQnlxtkx01JLshZZJvr57wIvJQsfQ-_8fD9y2wB1-xiuCE0U2ynNY4aWgO0/exec';
 
@@ -150,37 +150,31 @@ export default function ScarcityOffer() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-        className="relative z-10 max-w-5xl w-full grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-12 lg:gap-20 items-center"
+        className="relative z-10 max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-16 items-center"
       >
         <div className="flex flex-col items-start text-left">
-          <div className="flex items-center gap-3 mb-8">
-            {!isSoldOut && <PulseDot />}
-            <span className="font-display text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-[#ff3d1f]/90">
-              {isSoldOut ? 'Cupos agotados' : 'Edición limitada de la noche'}
+          <div className="flex items-center gap-2.5 mb-7">
+            <Ticket className="w-3.5 h-3.5 text-[#ff3d1f] -rotate-12" strokeWidth={2} />
+            <span className="font-display text-[10px] sm:text-[11px] uppercase tracking-widest text-[#ff3d1f]/90">
+              Cupón de reserva
             </span>
+            {!isSoldOut && (
+              <span className="ml-1">
+                <PulseDot />
+              </span>
+            )}
           </div>
 
-          <h2 className="font-display font-bold text-2xl sm:text-3xl leading-[1.15] tracking-tight text-white mb-6 uppercase">
-            {isSoldOut ? (
-              <span className="text-stone-100/50">Hoy ya no quedan mesas.</span>
-            ) : (
-              <>
-                {titulo}
-                <span className="block mt-1 font-serif italic font-light normal-case text-[#ff3d1f] text-xl sm:text-2xl">
-                  sólo por esta noche.
-                </span>
-              </>
-            )}
+          <h2 className="font-display font-black text-3xl sm:text-4xl leading-[1.1] tracking-tight text-white mb-6 uppercase">
+            {titulo}
           </h2>
 
-          <p className="font-serif text-base sm:text-lg text-stone-300/80 leading-relaxed max-w-md">
-            {isSoldOut
-              ? 'Mañana volvemos a encender el carbón. Síguenos para no perderte la próxima.'
-              : descripcion}
+          <p className="font-serif text-lg text-stone-300 leading-relaxed max-w-md">
+            {descripcion}
           </p>
         </div>
 
-        <div className="w-full flex flex-col gap-8">
+        <div className="w-full flex flex-col gap-7">
           <AnimatePresence mode="wait">
             {!isSoldOut ? (
               <motion.div
@@ -227,45 +221,68 @@ export default function ScarcityOffer() {
             ) : (
               <motion.div
                 key="soldout"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex items-center gap-4 border border-white/[0.06] px-6 py-8 text-stone-100/50"
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="relative flex flex-col items-center justify-center px-6 py-10 border border-stone-100/15 bg-gradient-to-b from-stone-100/[0.02] to-transparent"
               >
-                <Ban className="w-5 h-5 opacity-60 shrink-0" />
-                <span className="font-display text-[11px] uppercase tracking-[0.3em]">
-                  La&nbsp;cocina&nbsp;cerró&nbsp;por&nbsp;hoy
+                <span className="absolute top-0 left-0 w-3 h-3 border-t border-l border-[#ff3d1f]/45" />
+                <span className="absolute top-0 right-0 w-3 h-3 border-t border-r border-[#ff3d1f]/45" />
+                <span className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-[#ff3d1f]/45" />
+                <span className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#ff3d1f]/45" />
+
+                <span className="font-display text-[10px] uppercase tracking-[0.4em] text-stone-100/35 mb-3">
+                  Estado
                 </span>
+                <span className="font-display font-black text-2xl sm:text-3xl uppercase tracking-[0.18em] text-stone-100/85">
+                  Velada&nbsp;llena
+                </span>
+                <div className="w-10 h-px bg-[#ff3d1f]/40 mt-4" />
               </motion.div>
             )}
           </AnimatePresence>
 
-          {!isSoldOut && (
-            <button
-              onClick={handleClaim}
-              disabled={isUpdating}
-              className="group relative w-full py-5 overflow-hidden border border-[#ff3d1f]/35 hover:border-[#ff3d1f]/80 bg-gradient-to-b from-[#1a0805]/40 to-black/40 hover:from-[#260a06]/55 hover:to-black/40 transition-all duration-500 disabled:opacity-60 disabled:cursor-wait"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          <button
+            onClick={handleClaim}
+            disabled={isUpdating || isSoldOut}
+            className={`group relative w-full py-5 overflow-hidden border transition-all duration-500 ${
+              isSoldOut
+                ? 'border-stone-100/10 bg-black/40 cursor-not-allowed'
+                : 'border-[#ff3d1f]/35 hover:border-[#ff3d1f]/80 bg-gradient-to-b from-[#1a0805]/40 to-black/40 hover:from-[#260a06]/55 hover:to-black/40 disabled:opacity-60 disabled:cursor-wait'
+            }`}
+          >
+            {!isSoldOut && (
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  background: 'radial-gradient(ellipse at center, rgba(255, 61, 31, 0.18) 0%, transparent 70%)',
+                  background:
+                    'radial-gradient(ellipse at center, rgba(255, 61, 31, 0.18) 0%, transparent 70%)',
                 }}
               />
-              <span className="relative z-10 flex items-center justify-center gap-3 font-display text-[11px] sm:text-xs uppercase tracking-[0.4em] text-stone-100">
-                {isUpdating ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    Asegurando tu mesa
-                  </>
-                ) : (
-                  <>
-                    Quiero&nbsp;mi&nbsp;mesa
-                    <span className="text-[#ff3d1f] group-hover:translate-x-1 transition-transform duration-500">→</span>
-                  </>
-                )}
-              </span>
-            </button>
-          )}
+            )}
+            <span
+              className={`relative z-10 flex items-center justify-center gap-3 font-display text-[11px] sm:text-xs uppercase tracking-[0.4em] ${
+                isSoldOut ? 'text-stone-100/30' : 'text-stone-100'
+              }`}
+            >
+              {isSoldOut ? (
+                'Reserva no disponible'
+              ) : isUpdating ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  Asegurando tu mesa
+                </>
+              ) : (
+                <>
+                  Quiero&nbsp;mi&nbsp;mesa
+                  <span className="text-[#ff3d1f] group-hover:translate-x-1 transition-transform duration-500">
+                    →
+                  </span>
+                </>
+              )}
+            </span>
+          </button>
         </div>
       </motion.div>
     </section>
