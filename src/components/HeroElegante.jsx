@@ -53,9 +53,8 @@ export default function HeroElegante() {
   return (
     <section
       id="inicio"
-      className="relative w-full min-h-[100vh] sm:min-h-[100dvh] bg-[#040504] overflow-hidden flex items-center"
+      className="relative w-full min-h-[100svh] bg-[#040504] overflow-hidden flex items-center"
     >
-      {/* Atmósfera viva: slow zoom infinito */}
       <div className="absolute inset-0 z-0">
         <motion.img
           src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1920&auto=format&fit=crop"
@@ -80,14 +79,11 @@ export default function HeroElegante() {
           className="w-full h-full object-cover object-center grayscale-[35%] brightness-[0.6] mix-blend-luminosity"
         />
 
-        {/* Vignette asimétrico — peso visual al lado del texto */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#040504] via-[#040504]/55 to-[#040504]/85" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#040504] via-transparent to-[#040504]/70" />
 
-        {/* Glow ambiental fuera de centro */}
-        <div className="absolute top-1/3 -left-[10%] w-[60vw] h-[60vw] bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.18)_0%,transparent_55%)] pointer-events-none blur-[100px]" />
+        <div className="absolute top-1/3 -left-[10%] w-[60vw] h-[60vw] bg-[radial-gradient(circle_at_center,rgba(255,61,31,0.20)_0%,transparent_55%)] pointer-events-none blur-[100px]" />
 
-        {/* Grano fílmico */}
         <div
           className="absolute inset-0 opacity-[0.08] mix-blend-overlay pointer-events-none"
           style={{
@@ -97,7 +93,6 @@ export default function HeroElegante() {
         />
       </div>
 
-      {/* Marca lateral vertical */}
       <motion.div
         initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
@@ -107,10 +102,9 @@ export default function HeroElegante() {
         <span className="text-[10px] tracking-[0.45em] text-zinc-500 uppercase [writing-mode:vertical-rl] rotate-180 font-display">
           Est. Ibarra · Premium Cuts
         </span>
-        <span className="w-px h-24 bg-gradient-to-b from-orange-500/60 to-transparent" />
+        <span className="w-px h-24 bg-gradient-to-b from-[#ff3d1f]/70 to-transparent" />
       </motion.div>
 
-      {/* Capítulo — esquina superior derecha */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -118,56 +112,50 @@ export default function HeroElegante() {
         className="hidden md:flex absolute top-28 right-8 lg:right-16 z-20 items-center gap-4 text-zinc-500"
       >
         <span className="text-[10px] tracking-[0.4em] uppercase font-display">Capítulo</span>
-        <span className="text-xs tracking-[0.3em] font-display text-orange-400">01 / 04</span>
+        <span className="text-xs tracking-[0.3em] font-display text-[#ff3d1f]">01 / 04</span>
       </motion.div>
 
-      {/* Layout asimétrico — anclado a la izquierda */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="visible"
-        className="relative z-10 w-full max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-24 pt-28 pb-20 sm:pt-32 sm:pb-24"
+        className="relative z-10 w-full max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-24 pt-28 pb-12 sm:pt-32 sm:pb-16"
       >
-        {/* Badge */}
         <motion.div variants={spring} className="mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-3 border border-orange-500/25 bg-white/[0.03] backdrop-blur-md rounded-full pl-3 pr-5 py-2">
-            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-500/15">
-              <Flame className="w-3.5 h-3.5 text-orange-400" aria-hidden="true" />
+          <div className="inline-flex items-center gap-3 border border-[#ff3d1f]/30 bg-white/[0.03] backdrop-blur-md rounded-full pl-3 pr-5 py-2">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#ff3d1f]/15">
+              <Flame className="w-3.5 h-3.5 text-[#ff3d1f]" aria-hidden="true" />
             </span>
-            <span className="text-[10px] sm:text-[11px] tracking-[0.4em] text-orange-300/90 uppercase font-display">
-              Steakhouse · Leña Lenta
+            <span className="text-[10px] sm:text-[11px] tracking-[0.4em] text-orange-200/90 uppercase font-display">
+              Steakhouse de Ibarra · Fuego de Leña
             </span>
           </div>
         </motion.div>
 
-        {/* Título brutalista — tracking ajustado, masivo */}
         <motion.h1
           variants={reveal}
-          className="font-display font-black uppercase text-white leading-[0.86] tracking-[-0.045em] text-[clamp(3.5rem,11vw,12rem)] max-w-[14ch]"
+          className="font-display font-black uppercase text-white leading-[0.86] tracking-[-0.045em] text-[clamp(2.75rem,11vw,12rem)] max-w-[14ch]"
         >
           <span className="block">Donde hay</span>
-          <span className="block text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-orange-500 to-amber-600 italic font-serif tracking-[-0.02em]">
+          <span className="block text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-[#ff3d1f] to-red-700 italic font-serif tracking-[-0.02em]">
             humo,
           </span>
           <span className="block">hay carne.</span>
         </motion.h1>
 
-        {/* Línea + subtítulo + CTA */}
         <div className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-end">
           <motion.div variants={lineGrow} className="hidden md:block md:col-span-2 origin-left">
-            <span className="block h-px w-full bg-gradient-to-r from-orange-500 to-transparent" />
+            <span className="block h-px w-full bg-gradient-to-r from-[#ff3d1f] to-transparent" />
           </motion.div>
 
-          {/* Subtítulo: tracking amplio, aire entre letras */}
           <motion.p
             variants={reveal}
             className="md:col-span-6 text-zinc-300/90 text-sm sm:text-base font-light leading-[1.9] tracking-[0.2em] uppercase font-display max-w-xl"
           >
-            Cortes seleccionados, fuego lento a la leña y una mesa que recuerda. La experiencia{' '}
-            <span className="text-white">Casa Barbosa</span> no se explica — se prueba.
+            Carbón, leña y paciencia. Cortes que se eligen uno a uno, se cocinan sin prisa y se sirven sin adornos. En{' '}
+            <span className="text-white">Casa Barbosa</span> el plato habla solo.
           </motion.p>
 
-          {/* CTA — esquina inferior derecha del bloque */}
           <motion.div variants={spring} className="md:col-span-4 flex md:justify-end">
             <a
               href="https://wa.me/593984180801?text=Hola%20Casa%20Barbosa!%20Quiero%20hacer%20una%20reserva."
@@ -181,28 +169,26 @@ export default function HeroElegante() {
                 <ArrowUpRight className="w-4 h-4" />
               </span>
               <span
-                className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                className="absolute inset-0 bg-gradient-to-r from-[#ff3d1f] to-red-700 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 aria-hidden="true"
               />
             </a>
           </motion.div>
         </div>
 
-        {/* Meta-info inferior — estilo agencia */}
         <motion.div
           variants={spring}
           className="mt-16 sm:mt-24 flex flex-wrap items-center gap-x-10 gap-y-3 text-[10px] sm:text-[11px] tracking-[0.4em] uppercase text-zinc-500 font-display"
         >
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-            Reserva en Vivo
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ff3d1f] animate-pulse" />
+            Mesas abiertas
           </span>
-          <span>Mar — Dom · 12:30 / 22:00</span>
-          <span className="hidden sm:inline">Ibarra · Ecuador</span>
+          <span>Jue — Dom · 17:00 / 23:00</span>
+          <span className="hidden sm:inline">Ibarra · Imbabura</span>
         </motion.div>
       </motion.div>
 
-      {/* Indicador scroll */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -213,7 +199,7 @@ export default function HeroElegante() {
         <motion.span
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          className="block w-px h-8 bg-gradient-to-b from-orange-500 to-transparent"
+          className="block w-px h-8 bg-gradient-to-b from-[#ff3d1f] to-transparent"
         />
       </motion.div>
     </section>

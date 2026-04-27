@@ -9,7 +9,7 @@ import WhatsAppButton from '../components/WhatsAppButton.jsx';
 import ResenasPremium from '../components/ResenasPremium.jsx';
 ---
 
-<html lang="es" className="scroll-smooth bg-zinc-950">
+<html lang="es" class="scroll-smooth bg-[#040504]">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -17,10 +17,14 @@ import ResenasPremium from '../components/ResenasPremium.jsx';
 		<meta name="generator" content={Astro.generator} />
 		<title>Casa Barbosa | Steakhouse Premium en Ibarra</title>
 		<meta name="description" content="Auténticas carnes ahumadas a leña y cortes exclusivos en Ibarra." />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 	</head>
-	<body className="bg-zinc-950 text-stone-100 font-sans antialiased overflow-x-hidden selection:bg-red-600/50 selection:text-white">
+	<body class="bg-[#040504] text-stone-100 font-sans antialiased overflow-x-hidden selection:bg-amber-500/40 selection:text-white">
 		<Navbar client:load />
-		<main>
+		<main class="relative">
 			<HeroElegante client:load />
 			<ScarcityOffer client:visible />
 			<MenuPremium client:visible />
@@ -30,3 +34,23 @@ import ResenasPremium from '../components/ResenasPremium.jsx';
 		<WhatsAppButton client:idle />
 	</body>
 </html>
+
+<style is:global>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		scroll-behavior: smooth;
+	}
+
+	section[id] {
+		scroll-margin-top: 5rem;
+	}
+
+	.font-display {
+		font-family: 'Cinzel', serif;
+	}
+	.font-serif {
+		font-family: 'Crimson Text', serif;
+	}
+</style>

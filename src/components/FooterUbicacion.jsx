@@ -1,35 +1,45 @@
-import React from 'react';
 import { MapPin, Clock, Instagram, Facebook, Phone, Mail } from 'lucide-react';
 
 export default function FooterUbicacion() {
   return (
     <footer
       id="ubicacion"
-      className="relative overflow-hidden bg-[#040504] border-t border-white/5 font-sans"
+      className="relative overflow-hidden bg-[#040504] border-t border-white/15 font-sans"
     >
-      <div className="pointer-events-none absolute -top-40 right-0 h-[500px] w-[500px] rounded-full bg-orange-600/[0.04] blur-[140px]" />
-      <div className="pointer-events-none absolute -bottom-32 left-0 h-[420px] w-[420px] rounded-full bg-yellow-600/[0.03] blur-[120px]" />
+      <div className="pointer-events-none absolute -top-32 right-0 h-[420px] w-[420px] rounded-full bg-[#ff3d1f]/[0.07] blur-[140px]" />
+      <div className="pointer-events-none absolute -bottom-24 left-0 h-[360px] w-[360px] rounded-full bg-red-700/[0.05] blur-[120px]" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-24 pb-12">
+      <div
+        aria-hidden="true"
+        className="hidden md:flex pointer-events-none select-none absolute inset-0 items-center justify-center overflow-hidden"
+      >
+        <span
+          className="font-display font-black uppercase text-white opacity-[0.04] leading-none tracking-[-0.05em] whitespace-nowrap"
+          style={{ fontSize: 'clamp(10rem, 22vw, 22rem)' }}
+        >
+          BARBOSA
+        </span>
+      </div>
 
-        <div className="flex items-center gap-4 mb-20">
-          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-white/20" />
-          <span className="text-[10px] font-display tracking-[0.5em] uppercase text-zinc-500">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-16 pb-10">
+
+        <div className="flex items-center gap-4 mb-12">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/30 to-white/60" />
+          <span className="text-xs font-display tracking-[0.5em] uppercase text-white">
             Visítanos
           </span>
-          <span className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-white/20" />
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent via-white/30 to-white/60" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
 
-          <div className="lg:col-span-5 flex flex-col gap-10">
+          <div className="lg:col-span-3 flex flex-col gap-6">
             <div>
-              <span className="block text-[10px] font-display tracking-[0.4em] uppercase text-orange-500/80 mb-4">
+              <span className="block text-xs font-display tracking-[0.4em] uppercase text-[#ff3d1f] mb-3">
                 — Casa Barbosa
               </span>
-              <p className="text-zinc-400 text-base leading-relaxed font-serif italic max-w-md">
-                Donde el fuego lento esculpe sabores inolvidables y la carne
-                alcanza su máxima expresión.
+              <p className="text-white text-lg leading-relaxed font-serif italic">
+                Carbón, leña y paciencia. Así nace cada plato.
               </p>
             </div>
 
@@ -37,25 +47,25 @@ export default function FooterUbicacion() {
               href="https://wa.me/593984180801"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 self-start text-white border-b border-white/20 pb-2 hover:border-orange-500 transition-colors"
+              className="group inline-flex items-center gap-3 self-start text-white border-b border-white/50 pb-2 hover:border-[#ff3d1f] transition-colors"
             >
-              <Phone className="w-4 h-4 text-orange-500 transition-transform group-hover:translate-x-0.5" />
+              <Phone className="w-4 h-4 text-[#ff3d1f] transition-transform group-hover:translate-x-0.5" />
               <span className="font-display tracking-[0.25em] uppercase text-sm">
                 Reservar Mesa
               </span>
             </a>
           </div>
 
-          <div className="lg:col-span-2">
-            <h4 className="text-[10px] font-display tracking-[0.4em] uppercase text-zinc-500 mb-6">
+          <div className="lg:col-span-3">
+            <h4 className="text-xl font-display tracking-[0.15em] uppercase text-white mb-5 pb-3 border-b border-white/20">
               Ubicación
             </h4>
-            <ul className="space-y-3 text-zinc-300 font-serif text-[15px] leading-relaxed">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-orange-500/70 mt-1 shrink-0" />
+            <ul className="space-y-3 text-white font-serif text-lg leading-snug">
+              <li className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-[#ff3d1f] mt-1 shrink-0" />
                 <span>
                   Av. Mariano Acosta y Gabriela Mistral
-                  <span className="block text-zinc-500 text-sm mt-1">
+                  <span className="block text-white/75 text-lg mt-1 not-italic font-sans tracking-wide">
                     Ibarra · Imbabura
                   </span>
                 </span>
@@ -63,56 +73,57 @@ export default function FooterUbicacion() {
             </ul>
           </div>
 
-          <div className="lg:col-span-2">
-            <h4 className="text-[10px] font-display tracking-[0.4em] uppercase text-zinc-500 mb-6">
+          <div className="lg:col-span-3">
+            <h4 className="text-xl font-display tracking-[0.15em] uppercase text-white mb-5 pb-3 border-b border-white/20">
               Horario
             </h4>
-            <ul className="space-y-2 text-zinc-300 font-serif text-[15px] leading-relaxed">
-              <li>Jueves — Domingo</li>
-              <li className="text-orange-400/90 font-display tracking-[0.2em] text-xs pt-1">
-                17:00 — 23:00
-              </li>
-              <li className="text-zinc-600 text-sm pt-2 border-t border-white/5 mt-3">
-                Lun — Mié · Cerrado
+            <ul className="space-y-2 text-white font-serif text-lg leading-snug">
+              <li className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-[#ff3d1f] mt-1 shrink-0" />
+                <span>
+                  Jueves — Domingo
+                  <span className="block text-[#ff3d1f] font-display tracking-[0.2em] text-lg mt-1">
+                    17:00 — 23:00
+                  </span>
+                  <span className="block text-white/70 text-lg mt-2 font-sans not-italic">
+                    Lun — Mié · Cerrado
+                  </span>
+                </span>
               </li>
             </ul>
           </div>
 
           <div className="lg:col-span-3">
-            <h4 className="text-[10px] font-display tracking-[0.4em] uppercase text-zinc-500 mb-6">
+            <h4 className="text-xl font-display tracking-[0.15em] uppercase text-white mb-5 pb-3 border-b border-white/20">
               Contacto
             </h4>
-            <ul className="space-y-3 text-zinc-300 font-serif text-[15px]">
-              <li className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-orange-500/70" />
-                <a href="tel:+593984180801" className="hover:text-white transition-colors">
+            <ul className="space-y-3 text-white font-serif text-lg">
+              <li className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-[#ff3d1f] shrink-0" />
+                <a href="tel:+593984180801" className="hover:text-[#ff3d1f] transition-colors">
                   +593 98 418 0801
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-orange-500/70" />
-                <a href="mailto:reservas@casabarbosa.ec" className="hover:text-white transition-colors">
+              <li className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-[#ff3d1f] shrink-0" />
+                <a href="mailto:reservas@casabarbosa.ec" className="hover:text-[#ff3d1f] transition-colors">
                   reservas@casabarbosa.ec
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5 text-orange-500/70" />
-                <span className="text-zinc-500 text-sm">Abierto ahora</span>
-              </li>
             </ul>
 
-            <div className="flex gap-3 mt-8">
+            <div className="flex gap-3 mt-6">
               <a
                 href="#"
                 aria-label="Instagram"
-                className="group w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-zinc-500 hover:text-white hover:border-white/40 transition-all"
+                className="group w-11 h-11 border border-white/40 rounded-full flex items-center justify-center text-white hover:text-black hover:bg-white hover:border-white transition-all"
               >
                 <Instagram className="w-4 h-4 transition-transform group-hover:scale-110" />
               </a>
               <a
                 href="#"
                 aria-label="Facebook"
-                className="group w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-zinc-500 hover:text-white hover:border-white/40 transition-all"
+                className="group w-11 h-11 border border-white/40 rounded-full flex items-center justify-center text-white hover:text-black hover:bg-white hover:border-white transition-all"
               >
                 <Facebook className="w-4 h-4 transition-transform group-hover:scale-110" />
               </a>
@@ -120,9 +131,9 @@ export default function FooterUbicacion() {
           </div>
         </div>
 
-        <div className="mt-20 h-72 lg:h-80 w-full rounded-sm overflow-hidden relative border border-white/5 group">
-          <div className="absolute top-5 left-5 z-20 flex items-center gap-2 bg-black/70 backdrop-blur-md px-4 py-2 border border-white/10">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+        <div className="mt-12 h-64 lg:h-72 w-full rounded-sm overflow-hidden relative border border-white/15 group">
+          <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/80 backdrop-blur-md px-4 py-2 border border-white/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ff3d1f] animate-pulse" />
             <span className="font-display text-[10px] tracking-[0.35em] uppercase text-white">
               Abierto Hoy
             </span>
@@ -136,35 +147,20 @@ export default function FooterUbicacion() {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             title="Ubicación mapa Casa Barbosa en Ibarra"
-            className="w-full h-full grayscale opacity-60 group-hover:opacity-90 group-hover:grayscale-0 transition-all duration-700"
+            className="w-full h-full grayscale opacity-70 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-700"
           />
         </div>
 
-        <div className="mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-zinc-600 text-xs font-serif">
+        <div className="mt-10 pt-6 border-t border-white/15 flex flex-col md:flex-row justify-between items-center gap-4 text-white text-sm font-serif">
           <p>© {new Date().getFullYear()} Casa Barbosa · Creado por Saturlink</p>
-          <div className="flex items-center gap-3 opacity-70">
-            <span className="h-px w-6 bg-zinc-700" />
-            <span className="font-display tracking-[0.4em] uppercase text-[9px] text-zinc-600">
+          <div className="flex items-center gap-3">
+            <span className="h-px w-6 bg-white/40" />
+            <span className="font-display tracking-[0.4em] uppercase text-[10px] text-white">
               Premium Steakhouse
             </span>
-            <span className="h-px w-6 bg-zinc-700" />
+            <span className="h-px w-6 bg-white/40" />
           </div>
         </div>
-      </div>
-
-      <div
-        aria-hidden="true"
-        className="relative overflow-hidden select-none pointer-events-none"
-      >
-        <h1
-          className="font-display font-black uppercase text-white/[0.04] leading-[0.85] tracking-[-0.04em] whitespace-nowrap text-center"
-          style={{
-            fontSize: 'clamp(8rem, 28vw, 26rem)',
-            transform: 'translateY(15%)',
-          }}
-        >
-          BARBOSA
-        </h1>
       </div>
     </footer>
   );
