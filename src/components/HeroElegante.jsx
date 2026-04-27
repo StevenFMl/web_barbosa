@@ -100,7 +100,7 @@ export default function HeroElegante() {
         className="hidden lg:flex absolute left-8 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-6"
       >
         <span className="text-[10px] tracking-[0.45em] text-zinc-500 uppercase [writing-mode:vertical-rl] rotate-180 font-display">
-          Est. Ibarra · Premium Cuts
+          Est. Ibarra · Cortes al Carbón
         </span>
         <span className="w-px h-24 bg-gradient-to-b from-[#ff3d1f]/70 to-transparent" />
       </motion.div>

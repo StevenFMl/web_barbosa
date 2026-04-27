@@ -6,6 +6,11 @@ export default function FooterUbicacion() {
       id="ubicacion"
       className="relative overflow-hidden bg-[#040504] border-t border-white/15 font-sans"
     >
+      <div className="absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
+        <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
+          CAPÍTULO 05 // EL DESTINO
+        </span>
+      </div>
       <div className="pointer-events-none absolute -top-32 right-0 h-[420px] w-[420px] rounded-full bg-[#ff3d1f]/[0.07] blur-[140px]" />
       <div className="pointer-events-none absolute -bottom-24 left-0 h-[360px] w-[360px] rounded-full bg-red-700/[0.05] blur-[120px]" />
 

@@ -85,6 +85,11 @@ const GALLERY_IMAGES = [
 export default function ResenasPremium() {
   return (
     <section className="relative w-full overflow-hidden bg-[#040504] py-16 sm:py-20">
+      <div className="absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
+        <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
+          CAPÍTULO 04 // EL VEREDICTO
+        </span>
+      </div>
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         <motion.div

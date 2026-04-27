@@ -5,7 +5,7 @@ const menuItems = [
   {
     id: 1,
     name: 'Parrillada Barbosa',
-    description: 'La especialidad de la casa. Cuidada selección de res premium, cerdo ahumado a leña y embutidos artesanales de la región con nuestro chimichurri exclusivo.',
+    description: 'Carne elegida con obsesión. Cerdo ahumado a leña, embutidos de la zona y chimichurri de la casa. Sin atajos.',
     image: 'https://images.unsplash.com/photo-1544025162-8315ea07fc7a?q=80&w=800&auto=format&fit=crop',
     price: '$25.00',
     popular: true
@@ -13,7 +13,7 @@ const menuItems = [
   {
     id: 2,
     name: 'Costillas ST. Louis',
-    description: 'Slow-smoked por 10 horas en leña de manzano, glaseadas en nuestra salsa BBQ secreta. Tan suaves que se desprenden del hueso.',
+    description: 'Ahumado lento, diez horas sobre leña de manzano. Glaseadas con nuestra salsa de la casa. Se caen del hueso.',
     image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?q=80&w=800&auto=format&fit=crop',
     price: '$18.00',
     popular: false
@@ -21,7 +21,7 @@ const menuItems = [
   {
     id: 3,
     name: 'Pinchos de Lomo Fino',
-    description: 'Lomo fino marinado por 24 horas, intercalado con vegetales de temporada y servido con papas rústicas al romero.',
+    description: 'Lomo macerado veinticuatro horas. Vegetales de temporada y papa rústica al romero. Punto.',
     image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop',
     price: '$8.00',
     popular: false
@@ -29,7 +29,7 @@ const menuItems = [
   {
     id: 4,
     name: 'Sartenazo Campesino',
-    description: 'Cortes selectos picados a cuchillo, chorizo ahumado, plátano maduro, papas amarillas y queso provolone gratinado al carbón.',
+    description: 'Cortes picados a cuchillo, chorizo ahumado, plátano maduro, papa amarilla y provolone fundido al carbón.',
     image: 'https://images.unsplash.com/photo-1628863148117-9c9dc7d10f2c?q=80&w=800&auto=format&fit=crop',
     price: '$15.00',
     popular: false
@@ -37,7 +37,7 @@ const menuItems = [
   {
     id: 5,
     name: 'Chancho a la Barbosa',
-    description: 'Receta insignia. Cerdo asado lentamente al carbón sobre cama de hierbas andinas. Corteza cristalina, interior jugoso.',
+    description: 'Receta insignia. Cerdo al carbón sobre hierbas andinas. Corteza que truena, dentro jugoso.',
     image: 'https://images.unsplash.com/photo-1594041680534-f8b1a53e6065?q=80&w=800&auto=format&fit=crop',
     price: '$14.00',
     popular: true
@@ -72,6 +72,11 @@ export default function MenuPremium() {
 
   return (
     <section id="menu" className="py-16 sm:py-20 bg-[#040504] relative overflow-hidden">
+      <div className="absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
+        <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
+          CAPÍTULO 03 // LA CARTA
+        </span>
+      </div>
       <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-[#ff3d1f]/[0.05] blur-[120px] rounded-full pointer-events-none z-0"></div>
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-700/[0.04] blur-[120px] rounded-full pointer-events-none z-0"></div>
 
@@ -159,6 +164,25 @@ export default function MenuPremium() {
               </motion.article>
             );
           })}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          className="mt-16 sm:mt-24 flex justify-center relative z-20"
+        >
+          <a
+            href="/menu-barbosa.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-3 px-8 py-4 bg-transparent border border-[#ff3d1f]/50 text-stone-200 font-mono tracking-widest uppercase text-sm hover:bg-[#ff3d1f] hover:text-white transition-all duration-300"
+          >
+            <span>Ver Carta Completa</span>
+            <svg className="w-4 h-4 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+          </a>
         </motion.div>
 
       </div>
