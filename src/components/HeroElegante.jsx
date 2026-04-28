@@ -140,7 +140,7 @@ export default function HeroElegante() {
           <span className="block text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-[#ff3d1f] to-red-700 italic font-serif tracking-[-0.02em]">
             humo,
           </span>
-          <span className="block">hay carne.</span>
+          <span className="block">hay sabor.</span>
         </motion.h1>
 
         <div className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-end">

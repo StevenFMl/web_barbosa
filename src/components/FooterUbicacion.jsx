@@ -6,7 +6,7 @@ export default function FooterUbicacion() {
       id="ubicacion"
       className="relative overflow-hidden bg-[#040504] border-t border-white/15 font-sans"
     >
-      <div className="absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
+      <div className="hidden lg:block absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
         <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
           CAPÍTULO 05 // EL DESTINO
         </span>

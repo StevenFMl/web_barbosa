@@ -72,7 +72,7 @@ export default function MenuPremium() {
 
   return (
     <section id="menu" className="py-16 sm:py-20 bg-[#040504] relative overflow-hidden">
-      <div className="absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
+      <div className="hidden lg:block absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
         <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
           CAPÍTULO 03 // LA CARTA
         </span>
@@ -97,7 +97,7 @@ export default function MenuPremium() {
 
             <h2 className="text-[clamp(2.25rem,7vw,5.25rem)] font-black text-white tracking-tighter leading-[0.95] font-display uppercase">
               Cortes
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-[#ff3d1f] to-red-700 italic font-serif font-light tracking-tight normal-case ml-3">de autor</span>
+              <span className="block sm:inline-block text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-[#ff3d1f] to-red-700 italic font-serif font-light tracking-tight normal-case mt-2 sm:mt-0 sm:ml-3">de autor</span>
             </h2>
           </div>
 
