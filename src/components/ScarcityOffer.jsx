@@ -130,8 +130,8 @@ export default function ScarcityOffer() {
 
   return (
     <section className="relative w-full bg-[#040504] py-16 sm:py-20 px-6 sm:px-10 lg:px-14 flex justify-center items-center overflow-hidden">
-      <div className="hidden lg:block absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
-        <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
+      <div className="absolute top-6 left-0 right-0 text-center 2xl:top-12 2xl:left-8 2xl:right-auto 2xl:text-left z-40 pointer-events-none flex justify-center 2xl:block">
+        <span className="inline-block text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase 2xl:[writing-mode:vertical-rl] 2xl:rotate-180 drop-shadow-md">
           CAPÍTULO 02 // LA OPORTUNIDAD
         </span>
       </div>

@@ -6,8 +6,8 @@ export default function FooterUbicacion() {
       id="ubicacion"
       className="relative overflow-hidden bg-[#040504] border-t border-white/15 font-sans"
     >
-      <div className="hidden lg:block absolute top-8 left-4 sm:top-12 sm:left-8 z-40 pointer-events-none">
-        <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
+      <div className="absolute top-6 left-0 right-0 text-center 2xl:top-12 2xl:left-8 2xl:right-auto 2xl:text-left z-40 pointer-events-none flex justify-center 2xl:block">
+        <span className="inline-block text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase 2xl:[writing-mode:vertical-rl] 2xl:rotate-180 drop-shadow-md">
           CAPÍTULO 05 // EL DESTINO
         </span>
       </div>
@@ -157,7 +157,7 @@ export default function FooterUbicacion() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-white/15 flex flex-col md:flex-row justify-between items-center gap-4 text-white text-sm font-serif">
-          <p>© {new Date().getFullYear()} Casa Barbosa · Creado por Saturlink</p>
+          <p>© {new Date().getFullYear()} Casa Barbosa · Creado por <a href="https://saturlink.net" target="_blank" rel="noopener noreferrer" className="relative z-50 inline-block hover:text-[#ff3d1f] transition-colors underline underline-offset-4 decoration-white/30 hover:decoration-[#ff3d1f] cursor-pointer pointer-events-auto">Saturlink</a></p>
           <div className="flex items-center gap-3">
             <span className="h-px w-6 bg-white/40" />
             <span className="font-display tracking-[0.4em] uppercase text-[10px] text-white">
