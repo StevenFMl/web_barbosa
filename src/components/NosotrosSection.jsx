@@ -98,7 +98,7 @@ export default function NosotrosSection() {
               <p className="font-serif text-base sm:text-lg text-zinc-400 leading-relaxed">
                 Con fuego, con tiempo y con la convicción de que el chancho a la Barbosa merece hacerse bien.
               </p>
-              <p className="font-sans text-xs sm:text-sm tracking-[0.25em] uppercase text-zinc-300 mt-1">
+              <p className="font-sans text-sm sm:text-base tracking-[0.12em] uppercase text-zinc-300 mt-1">
                 Cuatro años en la Panamericana Norte, sector El Olivo, Ibarra.
               </p>
               <p className="font-display text-sm tracking-[0.2em] uppercase text-[#ff3d1f]">
@@ -132,7 +132,7 @@ export default function NosotrosSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5, duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
-              className="absolute -bottom-5 -left-4 sm:-left-6 bg-[#040504] border border-white/15 px-6 py-5 shadow-2xl"
+              className="absolute -bottom-5 left-0 sm:-left-6 bg-[#040504] border border-white/15 px-6 py-5 shadow-2xl"
             >
               <span className="block font-display font-black text-4xl text-white tracking-tight leading-none">4</span>
               <span className="block text-[10px] font-display tracking-[0.35em] uppercase text-[#ff3d1f] mt-1">

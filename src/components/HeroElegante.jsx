@@ -5,10 +5,13 @@ import { ArrowUpRight, Flame } from 'lucide-react';
 function useIsOpenNow() {
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
-    const now = new Date();
-    const day = now.getDay();
-    const hour = now.getHours();
-    setIsOpen([0, 4, 5, 6].includes(day) && hour >= 17 && hour < 23);
+    const check = () => {
+      const now = new Date();
+      setIsOpen([0, 4, 5, 6].includes(now.getDay()) && now.getHours() >= 17 && now.getHours() < 23);
+    };
+    check();
+    const id = setInterval(check, 60_000);
+    return () => clearInterval(id);
   }, []);
   return isOpen;
 }
@@ -167,7 +170,7 @@ export default function HeroElegante() {
 
           <motion.p
             variants={reveal}
-            className="md:col-span-6 text-zinc-300/90 text-sm sm:text-base font-light leading-[1.9] tracking-[0.2em] uppercase font-display max-w-xl"
+            className="md:col-span-6 text-zinc-300/90 text-sm sm:text-base font-light leading-[1.9] tracking-[0.06em] uppercase font-display max-w-xl"
           >
             Carbón, leña y paciencia. Cortes que se eligen uno a uno, se cocinan sin prisa y se sirven sin adornos. En{' '}
             <span className="text-white">Casa Barbosa</span> el plato habla solo.
