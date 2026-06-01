@@ -4,36 +4,36 @@ import { Star, Quote } from 'lucide-react';
 const TESTIMONIALS = [
   {
     id: 1,
-    name: "Alejandro V.",
-    role: "Comió el Chancho",
+    name: "Cliente habitual",
+    role: "Chancho a la Barbosa",
     quote: "El Chancho a la Barbosa es lo mejor que he probado en Ibarra. Punto.",
     rating: 5,
   },
   {
     id: 2,
-    name: "Sofía R.",
-    role: "Volvió por las costillas",
+    name: "Mesa de pareja",
+    role: "Costillas ST. Louis",
     quote: "Pedí las costillas. Volví a la semana siguiente. Y volveré otra vez.",
     rating: 5,
   },
   {
     id: 3,
-    name: "Diego M.",
-    role: "Cliente desde la apertura",
+    name: "Cliente frecuente",
+    role: "Ibarra, Ecuador",
     quote: "Aquí saben lo que es tratar la carne con respeto. Eso se nota desde el primer bocado.",
     rating: 5,
   },
   {
     id: 4,
-    name: "Carlos T.",
-    role: "Devoto del Sartenazo",
+    name: "Mesa familiar",
+    role: "Sartenazo Campesino",
     quote: "El Sartenazo Campesino es para compartir. Yo no lo compartí. Pidan dos.",
     rating: 5,
   },
   {
     id: 5,
-    name: "María F.",
-    role: "Ya es de la casa",
+    name: "Visita recurrente",
+    role: "Ibarra, Ecuador",
     quote: "Ambiente, atención y un fuego que se siente desde la entrada. Me llevé el sabor a casa.",
     rating: 5,
   },
@@ -70,6 +70,7 @@ const GALLERY_IMAGES = [
 export default function ResenasPremium() {
   return (
     <section
+      id="resenas"
       aria-labelledby="veredicto-heading"
       className="relative w-full overflow-hidden bg-[#040504] py-16 sm:py-20"
     >
@@ -78,7 +79,7 @@ export default function ResenasPremium() {
         className="absolute top-6 left-0 right-0 text-center 2xl:top-12 2xl:left-8 2xl:right-auto 2xl:text-left z-40 pointer-events-none flex justify-center 2xl:block"
       >
         <span className="inline-block text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase 2xl:[writing-mode:vertical-rl] 2xl:rotate-180">
-          CAPÍTULO 04 // EL VEREDICTO
+          CAPÍTULO 05 // EL VEREDICTO
         </span>
       </div>
 

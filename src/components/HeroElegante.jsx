@@ -1,5 +1,17 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Flame } from 'lucide-react';
+
+function useIsOpenNow() {
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    const now = new Date();
+    const day = now.getDay();
+    const hour = now.getHours();
+    setIsOpen([0, 4, 5, 6].includes(day) && hour >= 17 && hour < 23);
+  }, []);
+  return isOpen;
+}
 
 const container = {
   hidden: {},
@@ -50,6 +62,8 @@ const lineGrow = {
 };
 
 export default function HeroElegante() {
+  const isOpen = useIsOpenNow();
+
   return (
     <section
       id="inicio"
@@ -115,7 +129,7 @@ export default function HeroElegante() {
         className="hidden md:flex absolute top-28 right-8 lg:right-16 z-20 items-center gap-4 text-zinc-500"
       >
         <span className="text-[10px] tracking-[0.4em] uppercase font-display">Capítulo</span>
-        <span className="text-xs tracking-[0.3em] font-display text-[#ff3d1f]">01 / 04</span>
+        <span className="text-xs tracking-[0.3em] font-display text-[#ff3d1f]">01 / 05</span>
       </motion.div>
 
       <motion.div
@@ -184,8 +198,11 @@ export default function HeroElegante() {
           className="mt-16 sm:mt-24 flex flex-wrap items-center gap-x-10 gap-y-3 text-[10px] sm:text-[11px] tracking-[0.4em] uppercase text-zinc-500 font-display"
         >
           <span className="flex items-center gap-2">
-            <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-[#ff3d1f] animate-pulse" />
-            Mesas abiertas
+            <span
+              aria-hidden="true"
+              className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-[#ff3d1f] animate-pulse' : 'bg-zinc-600'}`}
+            />
+            {isOpen ? 'Mesas abiertas' : 'Abrimos Jue — Dom'}
           </span>
           <span>Jue — Dom · 17:00 / 23:00</span>
           <span className="hidden sm:inline">Ibarra · Imbabura</span>

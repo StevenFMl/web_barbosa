@@ -10,9 +10,11 @@ import { Menu, X } from 'lucide-react';
 const logoSrc = '/logo-barbosa.png';
 
 const navLinks = [
-  { name: 'Inicio', target: 'inicio' },
-  { name: 'Menú', target: 'menu' },
-  { name: 'Ubicación', target: 'ubicacion' },
+  { name: 'Inicio',    href: '/'           },
+  { name: 'Menú',     href: '/#menu'       },
+  { name: 'Nosotros', href: '/nosotros'    },
+  { name: 'Reseñas',  href: '/#resenas'   },
+  { name: 'Ubicación',href: '/#ubicacion'  },
 ];
 
 export default function Navbar() {
@@ -64,20 +66,20 @@ export default function Navbar() {
             {navLinks.map((item) => (
               <li key={item.name} className="relative">
                 <a
-                  href={`#${item.target}`}
-                  onMouseEnter={() => setHovered(item.target)}
-                  onFocus={() => setHovered(item.target)}
+                  href={item.href}
+                  onMouseEnter={() => setHovered(item.name)}
+                  onFocus={() => setHovered(item.name)}
                   className="relative block px-4 py-2 text-zinc-200 hover:text-white focus:text-white transition-colors duration-100"
                 >
                   {item.name}
-                  {hovered === item.target && (
+                  {hovered === item.name && (
                     <motion.span
                       layoutId="nav-indicator"
                       className="absolute left-3 right-3 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-[#ff3d1f] to-transparent"
                       transition={{ type: 'spring', stiffness: 700, damping: 35 }}
                     />
                   )}
-                  {hovered === item.target && (
+                  {hovered === item.name && (
                     <motion.span
                       layoutId="nav-dot"
                       className="absolute left-1/2 -translate-x-1/2 -bottom-[3px] w-1.5 h-1.5 rounded-full bg-[#ff3d1f] shadow-[0_0_10px_rgba(255,61,31,0.9)]"
@@ -149,7 +151,7 @@ export default function Navbar() {
               {navLinks.map((item, i) => (
                 <motion.a
                   key={item.name}
-                  href={`#${item.target}`}
+                  href={item.href}
                   onClick={() => setIsOpen(false)}
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}

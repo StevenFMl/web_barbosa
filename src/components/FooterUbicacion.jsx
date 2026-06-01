@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Clock, Instagram, Facebook, Phone, Mail } from 'lucide-react';
+import { MapPin, Clock, Phone } from 'lucide-react';
 
 function useIsOpenNow() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +22,7 @@ export default function FooterUbicacion() {
     >
       <div className="absolute top-6 left-0 right-0 text-center 2xl:top-12 2xl:left-8 2xl:right-auto 2xl:text-left z-40 pointer-events-none flex justify-center 2xl:block">
         <span className="inline-block text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase 2xl:[writing-mode:vertical-rl] 2xl:rotate-180">
-          CAPÍTULO 05 // EL DESTINO
+          CAPÍTULO 06 // EL DESTINO
         </span>
       </div>
       <div className="pointer-events-none absolute -top-32 right-0 h-[420px] w-[420px] rounded-full bg-[#ff3d1f]/[0.07] blur-[140px]" />
@@ -123,30 +123,31 @@ export default function FooterUbicacion() {
                   +593 98 418 0801
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#ff3d1f] shrink-0" />
-                <a href="mailto:reservas@casabarbosa.ec" className="hover:text-[#ff3d1f] transition-colors">
-                  reservas@casabarbosa.ec
-                </a>
-              </li>
             </ul>
 
+            {/* REDES SOCIALES — activar cuando existan perfiles reales
+            import { Instagram, Facebook } from 'lucide-react'; // agregar al import de arriba
             <div className="flex gap-3 mt-6">
               <a
-                href="#"
-                aria-label="Instagram"
+                href="https://www.instagram.com/HANDLE_REAL"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Casa Barbosa"
                 className="group w-11 h-11 border border-white/40 rounded-full flex items-center justify-center text-white hover:text-black hover:bg-white hover:border-white transition-all"
               >
                 <Instagram className="w-4 h-4 transition-transform group-hover:scale-110" />
               </a>
               <a
-                href="#"
-                aria-label="Facebook"
+                href="https://www.facebook.com/HANDLE_REAL"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook Casa Barbosa"
                 className="group w-11 h-11 border border-white/40 rounded-full flex items-center justify-center text-white hover:text-black hover:bg-white hover:border-white transition-all"
               >
                 <Facebook className="w-4 h-4 transition-transform group-hover:scale-110" />
               </a>
             </div>
+            */}
           </div>
         </div>
 
