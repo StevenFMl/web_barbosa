@@ -7,6 +7,8 @@ import {
 } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
+const logoSrc = '/logo-barbosa.png';
+
 const navLinks = [
   { name: 'Inicio', target: 'inicio' },
   { name: 'Menú', target: 'menu' },
@@ -48,7 +50,7 @@ export default function Navbar() {
             className="flex-shrink-0 flex items-center cursor-pointer z-50 group"
           >
             <img
-              src="/src/assets/logo barbosa chancho.png"
+              src={logoSrc}
               alt="Casa Barbosa"
               className="h-14 sm:h-16 lg:h-20 w-auto object-contain drop-shadow-[0_4px_16px_rgba(255,61,31,0.30)] transition-transform duration-150 ease-out group-hover:scale-[1.04]"
               loading="eager"
@@ -91,7 +93,7 @@ export default function Navbar() {
                 href="https://wa.me/593984180801"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative inline-flex items-center justify-center px-6 py-2.5 rounded-full text-sm font-semibold tracking-[0.25em] uppercase text-orange-100 border border-[#ff3d1f]/50 hover:border-[#ff3d1f] hover:text-white hover:bg-[#ff3d1f]/15 transition-all duration-150 overflow-hidden group"
+                className="relative inline-flex items-center justify-center px-6 py-2.5 rounded-full text-sm font-semibold tracking-[0.25em] uppercase text-orange-100 border border-[#ff3d1f]/50 hover:border-[#ff3d1f] hover:text-white hover:bg-[#ff3d1f]/15 transition-[border-color,color,background-color] duration-150 overflow-hidden group"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-[#ff3d1f]/0 via-[#ff3d1f]/30 to-[#ff3d1f]/0 translate-x-[-120%] group-hover:translate-x-[120%] transition-transform duration-300 ease-out" />
                 <span className="relative">Reservar</span>
@@ -115,7 +117,7 @@ export default function Navbar() {
                     exit={{ rotate: 90, opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <X className="h-6 w-6" />
+                    <X aria-hidden="true" className="h-6 w-6" />
                   </motion.span>
                 ) : (
                   <motion.span
@@ -125,7 +127,7 @@ export default function Navbar() {
                     exit={{ rotate: -90, opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <Menu className="h-6 w-6" />
+                    <Menu aria-hidden="true" className="h-6 w-6" />
                   </motion.span>
                 )}
               </AnimatePresence>

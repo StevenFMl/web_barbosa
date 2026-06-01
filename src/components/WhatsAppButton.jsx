@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
+const MAGNETIC_SPRING = { stiffness: 260, damping: 16, mass: 0.5 };
+const MAGNETIC_RADIUS = 90;
+const MAGNETIC_STRENGTH = 0.35;
+
 export default function WhatsAppButton() {
   const ref = useRef(null);
   const [hovered, setHovered] = useState(false);
@@ -8,12 +12,8 @@ export default function WhatsAppButton() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const magneticSpring = { stiffness: 260, damping: 16, mass: 0.5 };
-  const x = useSpring(mouseX, magneticSpring);
-  const y = useSpring(mouseY, magneticSpring);
-
-  const MAGNETIC_RADIUS = 90;
-  const MAGNETIC_STRENGTH = 0.35;
+  const x = useSpring(mouseX, MAGNETIC_SPRING);
+  const y = useSpring(mouseY, MAGNETIC_SPRING);
 
   const handleMouseMove = (e) => {
     const el = ref.current;
