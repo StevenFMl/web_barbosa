@@ -1,6 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Ticket } from 'lucide-react';
+import { 
+  Loader2, 
+  Ticket, 
+  Flame, 
+  Sparkles, 
+  Check, 
+  ArrowRight, 
+  Clock, 
+  Copy, 
+  CheckCircle2, 
+  MessageCircle, 
+  ExternalLink, 
+  Share2, 
+  Users, 
+  RefreshCw 
+} from 'lucide-react';
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGysZWAkQnlxtkx01JLshZZJvr57wIvJQsfQ-_8fD9y2wB1-xiuCE0U2ynNY4aWgO0/exec';
 
@@ -11,22 +26,32 @@ const HEARTBEAT_TRANSITION = {
 };
 
 const PulseDot = () => (
-  <span className="relative flex h-2 w-2 shrink-0">
+  <span className="relative flex h-2.5 w-2.5 shrink-0">
     <motion.span
-      className="absolute inline-flex h-full w-full rounded-full bg-[#ff3d1f]/50"
-      animate={{ scale: [1, 2.2, 1], opacity: [0.55, 0, 0.55] }}
+      className="absolute inline-flex h-full w-full rounded-full bg-[#ff3d1f]/60"
+      animate={{ scale: [1, 2.2, 1], opacity: [0.7, 0, 0.7] }}
       transition={HEARTBEAT_TRANSITION}
       style={{ willChange: 'transform, opacity' }}
     />
-    <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff3d1f] shadow-[0_0_8px_rgba(255,61,31,0.65)]" />
+    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ff3d1f] shadow-[0_0_10px_rgba(255,61,31,0.85)]" />
   </span>
 );
 
 export default function ScarcityOffer() {
-  const [offerData, setOfferData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [offerData, setOfferData] = useState({
+    titulo: '1 Vaso de Granizado',
+    descripcion: 'Ven por tu vaso de granizado gratis en tu consumo',
+    cupos_totales: 50,
+    cupos_restantes: 20,
+  });
+  const [loading, setLoading] = useState(false);
   const [dataKey, setDataKey] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [claimedCode, setClaimedCode] = useState(null);
+  const [claimUrl, setClaimUrl] = useState(null);
+  const [copied, setCopied] = useState(false);
+  const [sharedCopied, setSharedCopied] = useState(false);
+  const lastClaimTimeRef = useRef(0);
 
   const fetchOfferData = async () => {
     try {
@@ -41,26 +66,66 @@ export default function ScarcityOffer() {
       }
 
       if (data && data.titulo) {
+        // DETECCIÓN INTELIGENTE DE CAMBIO EN GOOGLE SHEETS:
+        // Si el dueño cambió el título en el Excel o aumentó los cupos totales para una nueva fase
+        try {
+          const savedStr = localStorage.getItem('casa_barbosa_cupon_activo_v1');
+          if (savedStr) {
+            const saved = JSON.parse(savedStr);
+            const savedTitle = (saved.promoTitulo || saved.titulo || '').trim().toLowerCase();
+            const incomingTitle = (data.titulo || '').trim().toLowerCase();
+            const savedTotales = Number(saved.promoTotales) || 0;
+            const incomingTotales = Number(data.totales) || 0;
+
+            // Si el título en el Excel es diferente a la promo que el usuario reclamó:
+            const isDifferentPromo = savedTitle && incomingTitle && savedTitle !== incomingTitle;
+            // O si aumentaron los cupos totales en el Excel (recarga / fase 2):
+            const isQuotaReloaded = savedTotales > 0 && incomingTotales > savedTotales;
+
+            if (isDifferentPromo || isQuotaReloaded) {
+              console.log('¡Nueva promoción o recarga detectada en Google Sheets! Renovando disponibilidad...');
+              localStorage.removeItem('casa_barbosa_cupon_activo_v1');
+              setClaimedCode(null);
+              setClaimUrl(null);
+              setDataKey(k => k + 1);
+            }
+          }
+        } catch (storageErr) {
+          console.warn('Error verificando versión de promoción:', storageErr);
+        }
+
         setOfferData(prev => {
-          if (!prev || prev.cupos_restantes !== data.restantes || prev.cupos_totales !== data.totales) {
+          const newRestantes = Math.max(0, data.restantes);
+          const newTotales = Math.max(1, data.totales);
+          if (
+            !prev || 
+            prev.cupos_restantes !== newRestantes || 
+            prev.cupos_totales !== newTotales ||
+            prev.titulo !== data.titulo ||
+            prev.descripcion !== data.descripcion
+          ) {
             setDataKey(k => k + 1);
           }
-          return {
+          const updated = {
             titulo: data.titulo,
             descripcion: data.descripcion,
-            cupos_totales: Math.max(1, data.totales),
-            cupos_restantes: Math.max(0, data.restantes),
+            cupos_totales: newTotales,
+            cupos_restantes: newRestantes,
           };
+          try {
+            localStorage.setItem('casa_barbosa_offer_cache', JSON.stringify(updated));
+          } catch (storageErr) {}
+          return updated;
         });
       }
     } catch (error) {
-      console.warn('Error visual:', error.message);
+      console.warn('Error visual al consultar cupón:', error.message);
       if (!offerData) {
         setOfferData({
-          titulo: 'Mesa Premium',
-          descripcion: 'Por favor intenta más tarde.',
-          cupos_totales: 1,
-          cupos_restantes: 0,
+          titulo: 'Cupón Especial Barbosa',
+          descripcion: 'Cortesía exclusiva en tu consumo o pedido.',
+          cupos_totales: 20,
+          cupos_restantes: 9,
         });
       }
     } finally {
@@ -68,228 +133,590 @@ export default function ScarcityOffer() {
     }
   };
 
+  // Función para generar un código único de alta entropía con fecha incluida
+  const generateUniqueCouponCode = () => {
+    const months = ['E', 'F', 'M', 'A', 'MY', 'J', 'JL', 'AG', 'S', 'O', 'N', 'D'];
+    const now = new Date();
+    const day = now.getDate();
+    const monthCode = months[now.getMonth()];
+    // Genera un token alfanumérico único de 4 caracteres (más de 1.6 millones de combinaciones)
+    const token = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `BRB-${day}${monthCode}-${token}`;
+  };
+
+  const createWhatsAppUrl = (code, promoTitle) => {
+    const phone = '593984085851';
+    const whatsappMsg = encodeURIComponent(
+      `¡Hola Casa Barbosa! Vengo de la web y quiero validar mi cupón:\n\n🎟️ Código Único: *${code}*\n🎁 Promoción: *${promoTitle}*\n📌 Condición: 1 cupón por persona\n\n¡Por favor confirmar mi cupón para mi visita/pedido!`
+    );
+    return `https://wa.me/${phone}?text=${whatsappMsg}`;
+  };
+
+  // 1. Al cargar, verificar si este dispositivo ya tiene un cupón reclamado hoy o caché previo
   useEffect(() => {
+    try {
+      const cachedOffer = localStorage.getItem('casa_barbosa_offer_cache');
+      if (cachedOffer) {
+        const parsedOffer = JSON.parse(cachedOffer);
+        if (parsedOffer && parsedOffer.titulo) {
+          setOfferData(parsedOffer);
+        }
+      }
+    } catch (e) {}
+
+    try {
+      const saved = localStorage.getItem('casa_barbosa_cupon_activo_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const claimedDate = parsed.claimedAt ? new Date(parsed.claimedAt).toDateString() : null;
+        const todayDate = new Date().toDateString();
+        // Solo mantenemos activo si fue reclamado hoy en esta jornada
+        if (claimedDate === todayDate && parsed.code) {
+          setClaimedCode(parsed.code);
+          setClaimUrl(parsed.targetUrl || createWhatsAppUrl(parsed.code, parsed.titulo || 'Cortesía Barbosa'));
+        } else {
+          // Si es de un día anterior, liberamos para que pueda disfrutar la nueva jornada
+          localStorage.removeItem('casa_barbosa_cupon_activo_v1');
+        }
+      }
+    } catch (e) {
+      console.warn('LocalStorage no disponible:', e);
+    }
+
     fetchOfferData();
-    const intervalId = setInterval(fetchOfferData, 30000);
-    return () => clearInterval(intervalId);
+    // Actualización frecuente en tiempo real cada 10 segundos
+    const intervalId = setInterval(fetchOfferData, 10000);
+
+    // Si el usuario regresa a la pestaña, actualizar inmediatamente
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchOfferData();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', fetchOfferData);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', fetchOfferData);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleClaim = async (e) => {
-    e.preventDefault();
-    if (offerData.cupos_restantes <= 0 || isUpdating) return;
+  const handleShareFriend = () => {
+    const shareText = `¡Oye! En Casa Barbosa tienen cupones de cortesía activos hoy para su chancho a la Barbosa y asados al carbón. Quedan pocos cupos (1 cupón por persona). Reclama el tuyo aquí antes de que se agoten: https://casabarbosa.ec/#oportunidad`;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      navigator.share({
+        title: 'Casa Barbosa - Cupón de Cortesía',
+        text: shareText,
+        url: 'https://casabarbosa.ec/#oportunidad',
+      }).catch(() => {
+        // Fallback a portapapeles si cancela
+      });
+    } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(shareText);
+      setSharedCopied(true);
+      setTimeout(() => setSharedCopied(false), 2500);
+    }
+  };
+
+  const handleClaim = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const now = Date.now();
+    // Protección anti-spam de clics rápidos (mínimo 4s entre intentos)
+    if (now - lastClaimTimeRef.current < 4000) return;
+    lastClaimTimeRef.current = now;
+
+    // Bloqueo estricto: no permitir reclamos si ya se tiene código, si está cargando o agotado
+    if (claimedCode || isUpdating || (offerData && offerData.cupos_restantes <= 0)) return;
 
     setIsUpdating(true);
+
     try {
-      const response = await fetch(`${SCRIPT_URL}?action=claim&t=${new Date().getTime()}`);
-      const textResponse = await response.text();
+      // 1. Generar código único irrepetible con fecha de forma instantánea
+      const nuevoCodigo = generateUniqueCouponCode();
+      const currentTitle = offerData?.titulo || 'Cortesía de la Casa';
+      const targetUrl = createWhatsAppUrl(nuevoCodigo, currentTitle);
 
-      let result;
+      // 2. ABRIR EN OTRA PESTAÑA DE INMEDIATO (Síncrono en el gesto de clic para cero bloqueos de navegador)
+      let newTab = null;
       try {
-        result = JSON.parse(textResponse);
-      } catch (err) {
-        throw new Error('Google no devolvió un JSON válido al intentar reclamar.');
+        newTab = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      } catch (openErr) {
+        console.warn('Pop-up blocker detectado, botón disponible en pantalla');
       }
 
-      if (result.success) {
-        const phone = '593984180801';
-        const codigo = result.codigo;
-
-        const whatsappMsg = encodeURIComponent(
-          `¡Hola Casa Barbosa! Vengo de la web y quiero reservar la promoción de: ${offerData.titulo}.\n\n🎟️ Mi código único de cupón es: *${codigo}*`
+      // 3. Guardar inmediatamente en localStorage con la firma de la promoción para blindar y detectar cambios
+      try {
+        localStorage.setItem(
+          'casa_barbosa_cupon_activo_v1',
+          JSON.stringify({
+            code: nuevoCodigo,
+            promoTitulo: currentTitle,
+            promoTotales: offerData?.cupos_totales || 20,
+            claimedAt: Date.now(),
+            targetUrl: targetUrl,
+          })
         );
-        const whatsappUrl = `https://wa.me/${phone}?text=${whatsappMsg}`;
-
-        setOfferData(prev => ({ ...prev, cupos_restantes: result.restantes }));
-        window.open(whatsappUrl, '_blank');
-      } else {
-        alert('Lo sentimos, los cupones se acaban de agotar.');
-        fetchOfferData();
+      } catch (e) {
+        console.warn('No se pudo guardar en localStorage:', e);
       }
+
+      // 4. Actualizar estado de la interfaz al instante
+      const restantes = Math.max(0, (offerData?.cupos_restantes || 10) - 1);
+      setOfferData(prev => ({ ...prev, cupos_restantes: restantes }));
+      setClaimedCode(nuevoCodigo);
+      setClaimUrl(targetUrl);
+
+      // 5. Notificar a Google Apps Script en segundo plano (con timeout de 7s para resiliencia total)
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutId = setTimeout(() => {
+        if (controller) controller.abort();
+      }, 7000);
+
+      fetch(`${SCRIPT_URL}?action=claim&code=${nuevoCodigo}&t=${Date.now()}`, {
+        signal: controller ? controller.signal : undefined,
+      })
+        .then(res => res.json())
+        .then(data => {
+          clearTimeout(timeoutId);
+          if (data && typeof data.restantes === 'number') {
+            setOfferData(prev => ({ ...prev, cupos_restantes: data.restantes }));
+          }
+        })
+        .catch(fetchErr => {
+          clearTimeout(timeoutId);
+          console.warn('Sincronización en segundo plano completada localmente:', fetchErr.message);
+        });
+
     } catch (error) {
-      console.error('Error detallado en flujo de reclamo:', error);
-      alert('Hubo un error al generar tu cupón único. Por favor, intenta de nuevo.');
+      console.error('Error al reclamar cupón:', error);
     } finally {
       setIsUpdating(false);
     }
   };
 
+  const handleCopyCode = () => {
+    if (!claimedCode) return;
+    navigator.clipboard.writeText(claimedCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
   if (loading) {
     return (
-      <section className="w-full bg-[#040504] py-16 sm:py-20 flex justify-center items-center min-h-[240px]">
-        <Loader2 className="w-6 h-6 text-[#ff3d1f]/70 animate-spin" />
+      <section className="w-full bg-[#040504] py-16 sm:py-24 flex justify-center items-center min-h-[260px]">
+        <div className="flex items-center gap-3 text-[#ff3d1f]">
+          <Loader2 className="w-6 h-6 animate-spin" />
+          <span className="font-mono text-xs uppercase tracking-widest text-zinc-400">
+            Sincronizando cupones en vivo...
+          </span>
+        </div>
       </section>
     );
   }
 
   const { titulo, descripcion, cupos_totales, cupos_restantes } = offerData;
-  const isSoldOut = cupos_restantes <= 0;
+  const isSoldOut = cupos_restantes <= 0 && !claimedCode;
   const progressPercentage = isSoldOut ? 0 : (cupos_restantes / cupos_totales) * 100;
   const paddedRestantes = String(cupos_restantes).padStart(2, '0');
   const paddedTotales = String(cupos_totales).padStart(2, '0');
 
   return (
-    <section className="relative w-full bg-[#040504] py-16 sm:py-20 px-6 sm:px-10 lg:px-14 flex justify-center items-center overflow-hidden">
-      <div className="absolute top-6 left-0 right-0 text-center 2xl:top-12 2xl:left-8 2xl:right-auto 2xl:text-left z-40 pointer-events-none flex justify-center 2xl:block">
-        <span className="inline-block text-[10px] sm:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase 2xl:[writing-mode:vertical-rl] 2xl:rotate-180 drop-shadow-md">
+    <section id="oportunidad" className="relative w-full bg-[#040504] py-14 sm:py-20 lg:py-24 px-4 sm:px-8 lg:px-14 overflow-hidden">
+      {/* Chapter side marker for wide screens */}
+      <div className="hidden xl:flex absolute top-20 sm:top-24 left-6 2xl:left-10 z-20 flex-col items-center gap-4 pointer-events-none select-none">
+        <span className="inline-block text-[11px] 2xl:text-xs font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
           CAPÍTULO 02 // LA OPORTUNIDAD
         </span>
+        <span className="w-px h-16 2xl:h-20 bg-gradient-to-b from-[#ff3d1f]/60 to-transparent" />
       </div>
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 55% 45% at 50% 55%, rgba(160, 50, 18, 0.12) 0%, rgba(90, 25, 8, 0.05) 40%, transparent 72%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 28% 22% at 50% 60%, rgba(255, 61, 31, 0.07) 0%, transparent 65%)',
-        }}
-      />
 
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-        className="relative z-10 max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-16 items-center"
-      >
-        <div className="flex flex-col items-start text-left">
-          <div className="flex items-center gap-2.5 mb-7">
-            <Ticket className="w-3.5 h-3.5 text-[#ff3d1f] -rotate-12" strokeWidth={2} />
-            <span className="font-display text-[10px] sm:text-[11px] uppercase tracking-widest text-[#ff3d1f]/90">
-              Cupón de reserva
+      {/* Atmospheric ambient glows */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[900px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(255,61,31,0.08)_0%,rgba(180,50,15,0.03)_50%,transparent_75%)] pointer-events-none blur-3xl" />
+      <div className="absolute top-0 right-1/4 w-[350px] h-[350px] bg-amber-900/[0.05] rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="relative z-10 max-w-5xl mx-auto">
+        
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-8 sm:mb-12"
+        >
+          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 border border-[#ff3d1f]/40 bg-black/60 backdrop-blur-md rounded-full mb-3.5">
+            <Ticket className="w-3.5 h-3.5 text-[#ff3d1f] -rotate-12" />
+            <span className="font-display text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-orange-200/90 font-bold">
+              Cupón Exclusivo · En Vivo
             </span>
-            {!isSoldOut && (
-              <span className="ml-1">
-                <PulseDot />
-              </span>
-            )}
+            {!isSoldOut && <PulseDot />}
           </div>
 
-          <h2 className="font-display font-black text-3xl sm:text-4xl leading-[1.1] tracking-tight text-white mb-6 uppercase">
-            {titulo}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-[1] font-display uppercase">
+            Cortesía
+            <span className="block sm:inline-block text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-[#ff3d1f] to-red-700 italic font-serif font-light tracking-tight normal-case mt-1 sm:mt-0 sm:ml-3">
+              de la Casa
+            </span>
           </h2>
 
-          <p className="font-serif text-lg text-stone-300 leading-relaxed max-w-md">
-            {descripcion}
+          <p className="max-w-xl mx-auto text-zinc-400 font-serif text-sm sm:text-base leading-relaxed mt-2.5">
+            Promoción activa por tiempo limitado. Reclama tu cupón antes de que se agoten las unidades de la jornada.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="w-full flex flex-col gap-7">
-          <AnimatePresence mode="wait">
-            {!isSoldOut ? (
-              <motion.div
-                key={`active-${dataKey}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.5 }}
-                className="flex flex-col gap-5"
-              >
-                <div className="flex items-center justify-between font-display text-[10px] uppercase tracking-[0.3em] text-stone-100/40">
-                  <span>Mesas&nbsp;libres</span>
-                  <span className="text-stone-100/30">en&nbsp;vivo</span>
-                </div>
+        {/* LUXURY VIP TICKET VOUCHER CARD */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full bg-gradient-to-br from-[#120806] via-[#090a09] to-[#040504] border border-[#ff3d1f]/40 rounded-sm shadow-2xl shadow-black overflow-hidden"
+        >
+          {/* Subtle Background Glow inside ticket */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#ff3d1f]/[0.04] blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-60 h-60 bg-amber-700/[0.03] blur-2xl pointer-events-none" />
 
-                <div className="flex items-baseline gap-3 border-b border-white/[0.06] pb-5">
-                  <motion.span
-                    key={paddedRestantes}
-                    animate={{ scale: [1, 1.025, 1], opacity: [0.92, 1, 0.92] }}
-                    transition={HEARTBEAT_TRANSITION}
-                    className="font-mono font-light text-5xl sm:text-6xl lg:text-7xl text-stone-100 tabular-nums leading-none tracking-tighter origin-left"
-                    style={{
-                      textShadow: '0 0 22px rgba(255, 61, 31, 0.28)',
-                      willChange: 'transform, opacity',
-                    }}
-                  >
-                    {paddedRestantes}
-                  </motion.span>
-                  <span className="font-mono text-stone-100/30 text-2xl sm:text-3xl tabular-nums">
-                    /&nbsp;{paddedTotales}
+          <div className="grid grid-cols-1 lg:grid-cols-12 relative z-10">
+            
+            {/* MAIN TICKET SECTION (Left 7 cols on desktop) */}
+            <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-dashed border-white/15 relative">
+              {/* Notches for Ticket Perforation Effect */}
+              <div className="hidden lg:block absolute -top-4 -right-4 w-8 h-8 rounded-full bg-[#040504] border border-[#ff3d1f]/40 z-20 shadow-inner" />
+              <div className="hidden lg:block absolute -bottom-4 -right-4 w-8 h-8 rounded-full bg-[#040504] border border-[#ff3d1f]/40 z-20 shadow-inner" />
+
+              <div className="lg:hidden absolute -bottom-4 -left-4 w-8 h-8 rounded-full bg-[#040504] border border-[#ff3d1f]/40 z-20 shadow-inner" />
+              <div className="lg:hidden absolute -bottom-4 -right-4 w-8 h-8 rounded-full bg-[#040504] border border-[#ff3d1f]/40 z-20 shadow-inner" />
+
+              <div>
+                {/* Ticket Header Bar */}
+                <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <Flame className="w-4 h-4 text-[#ff3d1f]" />
+                    <span className="font-display font-black text-xs uppercase tracking-[0.25em] text-white">
+                      Casa Barbosa <span className="text-[#ff3d1f]">//</span> Cupón Oficial
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#ff3d1f] bg-[#ff3d1f]/10 border border-[#ff3d1f]/30 px-2.5 py-0.5">
+                    Activo Hoy
                   </span>
                 </div>
 
-                <div className="w-full h-[2px] bg-white/[0.06] overflow-hidden relative">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progressPercentage}%` }}
-                    transition={{ duration: 1.2, ease: 'easeInOut' }}
-                    className="h-full bg-gradient-to-r from-red-700/80 via-[#ff3d1f] to-orange-300/80"
-                    style={{ willChange: 'width' }}
-                  />
+                {/* Offer Title */}
+                <div className="mb-4">
+                  <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.3em] block mb-1">
+                    Beneficio promocional:
+                  </span>
+                  <h3 className="font-display font-black text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight uppercase leading-[1.05]">
+                    {titulo}
+                  </h3>
                 </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="soldout"
-                initial={{ opacity: 0, scale: 0.97 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="relative flex flex-col items-center justify-center px-6 py-10 border border-stone-100/15 bg-gradient-to-b from-stone-100/[0.02] to-transparent"
-              >
-                <span className="absolute top-0 left-0 w-3 h-3 border-t border-l border-[#ff3d1f]/45" />
-                <span className="absolute top-0 right-0 w-3 h-3 border-t border-r border-[#ff3d1f]/45" />
-                <span className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-[#ff3d1f]/45" />
-                <span className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#ff3d1f]/45" />
 
-                <span className="font-display text-[10px] uppercase tracking-[0.4em] text-stone-100/35 mb-3">
-                  Estado
-                </span>
-                <span className="font-display font-black text-2xl sm:text-3xl uppercase tracking-[0.18em] text-stone-100/85">
-                  Velada&nbsp;llena
-                </span>
-                <div className="w-10 h-px bg-[#ff3d1f]/40 mt-4" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {/* Offer Description */}
+                <p className="font-serif text-base sm:text-lg text-amber-200/90 leading-relaxed italic mb-6">
+                  "{descripcion}"
+                </p>
 
-          <button
-            onClick={handleClaim}
-            disabled={isUpdating || isSoldOut}
-            className={`group relative w-full py-5 overflow-hidden border transition-all duration-500 ${
-              isSoldOut
-                ? 'border-stone-100/10 bg-black/40 cursor-not-allowed'
-                : 'border-[#ff3d1f]/35 hover:border-[#ff3d1f]/80 bg-gradient-to-b from-[#1a0805]/40 to-black/40 hover:from-[#260a06]/55 hover:to-black/40 disabled:opacity-60 disabled:cursor-wait'
-            }`}
-          >
-            {!isSoldOut && (
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{
-                  background:
-                    'radial-gradient(ellipse at center, rgba(255, 61, 31, 0.18) 0%, transparent 70%)',
-                }}
-              />
-            )}
-            <span
-              className={`relative z-10 flex items-center justify-center gap-3 font-display text-[11px] sm:text-xs uppercase tracking-[0.4em] ${
-                isSoldOut ? 'text-stone-100/30' : 'text-stone-100'
-              }`}
-            >
-              {isSoldOut ? (
-                'Reserva no disponible'
-              ) : isUpdating ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Asegurando tu mesa
-                </>
+                {/* Perks Checklist (100% Cupones, Cero mención a mesas) */}
+                <div className="space-y-2.5 mb-6 sm:mb-8">
+                  <div className="flex items-center gap-2.5 text-xs sm:text-sm font-serif text-zinc-300">
+                    <span className="w-4 h-4 rounded-full bg-[#ff3d1f]/20 border border-[#ff3d1f]/50 flex items-center justify-center shrink-0">
+                      <Check className="w-2.5 h-2.5 text-[#ff3d1f]" strokeWidth={3} />
+                    </span>
+                    <span>Válido para canjear en tu consumo en el restaurante o para llevar</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs sm:text-sm font-serif text-amber-300 font-semibold">
+                    <span className="w-4 h-4 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center shrink-0">
+                      <Check className="w-2.5 h-2.5 text-amber-400" strokeWidth={3} />
+                    </span>
+                    <span>Condición: Válido estrictamente 1 cupón por persona por consumo o visita</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs sm:text-sm font-serif text-zinc-300">
+                    <span className="w-4 h-4 rounded-full bg-[#ff3d1f]/20 border border-[#ff3d1f]/50 flex items-center justify-center shrink-0">
+                      <Check className="w-2.5 h-2.5 text-[#ff3d1f]" strokeWidth={3} />
+                    </span>
+                    <span>Genera un código alfanumérico único e intransferible</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs sm:text-sm font-serif text-zinc-300">
+                    <span className="w-4 h-4 rounded-full bg-[#ff3d1f]/20 border border-[#ff3d1f]/50 flex items-center justify-center shrink-0">
+                      <Check className="w-2.5 h-2.5 text-[#ff3d1f]" strokeWidth={3} />
+                    </span>
+                    <span>Descuento o cortesía aplicable presentando tu código</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Voucher Monogram & Barcode Aesthetic */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-zinc-500">
+                <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.25em] uppercase">
+                  CUPÓN OFICIAL // BARBOSA-2026
+                </span>
+                <div className="flex items-center gap-0.5 h-3.5 opacity-60">
+                  {[3, 5, 2, 6, 4, 2, 7, 3, 5, 2, 6, 4].map((h, i) => (
+                    <span key={i} className="w-[1.5px] bg-zinc-500 inline-block" style={{ height: `${h * 2}px` }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* TICKET STUB / LIVE COUNTER & CLAIM ACTION (Right 5 cols on desktop) */}
+            <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-black/40 relative">
+              
+              {/* Si ya reclamó el cupón en este dispositivo, mostramos pantalla de éxito con el código generado y bloqueado */}
+              {claimedCode ? (
+                <div className="flex flex-col justify-between h-full py-2">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-emerald-400">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                        <span className="font-display font-black text-xs uppercase tracking-[0.25em] text-emerald-400">
+                          Cupón Asignado
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-emerald-400/90 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                        1 por cliente
+                      </span>
+                    </div>
+
+                    <div className="bg-gradient-to-b from-emerald-950/40 to-black/60 border border-emerald-500/40 p-5 rounded-sm text-center shadow-inner">
+                      <span className="text-zinc-400 font-mono text-[10px] uppercase tracking-widest block mb-1.5">
+                        Tu código único intransferible:
+                      </span>
+                      <div className="text-3xl sm:text-4xl font-mono font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-orange-100 tracking-widest my-2 select-all drop-shadow-[0_2px_12px_rgba(255,61,31,0.5)]">
+                        {claimedCode}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyCode}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-mono text-zinc-200 mt-1 transition-colors rounded-sm cursor-pointer"
+                      >
+                        {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-zinc-400" />}
+                        <span>{copied ? '¡Copiado al portapapeles!' : 'Copiar código'}</span>
+                      </button>
+                    </div>
+
+                    {/* APARTADO VISIBLE BAJO EL CÓDIGO: Cupos restantes y aviso a amigos/familiares */}
+                    <div className="bg-white/[0.03] border border-white/10 rounded-sm p-3.5 text-left space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <PulseDot />
+                          <span className="font-mono text-[11px] uppercase tracking-wider text-orange-200 font-bold">
+                            {cupos_restantes > 0 
+                              ? `Quedan ${cupos_restantes} de ${cupos_totales} cupones hoy` 
+                              : 'Cupos de hoy agotados'}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-zinc-400">
+                          {cupos_restantes > 0 ? `${Math.round(progressPercentage)}% disp.` : '0%'}
+                        </span>
+                      </div>
+
+                      {/* Barra de progreso compacta */}
+                      <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-red-600 via-[#ff3d1f] to-amber-400 transition-all duration-500"
+                          style={{ width: `${progressPercentage}%` }}
+                        />
+                      </div>
+
+                      <p className="text-zinc-300 font-serif text-xs leading-snug">
+                        {cupos_restantes > 0 
+                          ? '¡Avisa a tus amigos o familiares antes de que se terminen los cupos! (Condición: 1 cupón por persona).'
+                          : 'Se han terminado los cupos disponibles para la jornada actual.'}
+                      </p>
+
+                      {cupos_restantes > 0 && (
+                        <button
+                          type="button"
+                          onClick={handleShareFriend}
+                          className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-[#ff3d1f]/10 hover:bg-[#ff3d1f]/20 border border-[#ff3d1f]/35 text-orange-200 text-xs font-mono transition-colors rounded-sm cursor-pointer"
+                        >
+                          <Share2 className="w-3.5 h-3.5 text-[#ff3d1f]" />
+                          <span>{sharedCopied ? '¡Enlace copiado para compartir!' : 'Avisar a amigos o familiares (Copiar link)'}</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <p className="text-zinc-400 font-serif text-xs leading-relaxed text-center">
+                      Tu código está asegurado en este dispositivo (1 por persona). Presenta este comprobante al ordenar o envíalo por WhatsApp.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 pt-6">
+                    <a
+                      href={claimUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2.5 w-full py-4 px-6 bg-gradient-to-r from-emerald-700 via-emerald-600 to-green-600 text-white font-display text-xs sm:text-sm font-bold uppercase tracking-[0.2em] shadow-xl shadow-emerald-900/40 hover:brightness-110 active:scale-[0.99] transition-all rounded-sm group"
+                    >
+                      <MessageCircle className="w-4 h-4 fill-white shrink-0" />
+                      <span>Abrir WhatsApp (Nueva Pestaña)</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-emerald-200 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                    </a>
+                    <p className="text-center text-[10px] font-mono text-zinc-500">
+                      La página web permanece abierta con tu código guardado
+                    </p>
+
+                  </div>
+                </div>
               ) : (
-                <>
-                  Quiero&nbsp;mi&nbsp;mesa
-                  <span className="text-[#ff3d1f] group-hover:translate-x-1 transition-transform duration-500">
-                    →
-                  </span>
-                </>
+                /* Estado normal de conteo y botón de reclamo */
+                <AnimatePresence mode="wait">
+                  {!isSoldOut ? (
+                    <motion.div
+                      key={`active-${dataKey}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.4 }}
+                      className="flex flex-col gap-6"
+                    >
+                      {/* Live indicator header */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <PulseDot />
+                          <span className="font-display font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#ff3d1f]">
+                            En Vivo
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400">
+                          Actualizado ahora
+                        </span>
+                      </div>
+
+                      {/* Big Numbers Display */}
+                      <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm">
+                        <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.3em] block mb-2">
+                          Cupones disponibles:
+                        </span>
+                        <div className="flex items-baseline gap-3">
+                          <motion.span
+                            key={paddedRestantes}
+                            animate={{ scale: [1, 1.03, 1], opacity: [0.95, 1, 0.95] }}
+                            transition={HEARTBEAT_TRANSITION}
+                            className="font-mono font-black text-6xl sm:text-7xl lg:text-8xl text-stone-100 tabular-nums leading-none tracking-tighter"
+                            style={{
+                              textShadow: '0 0 25px rgba(255, 61, 31, 0.35)',
+                              willChange: 'transform, opacity',
+                            }}
+                          >
+                            {paddedRestantes}
+                          </motion.span>
+                          <div className="flex flex-col">
+                            <span className="font-mono text-zinc-500 text-2xl sm:text-3xl tabular-nums leading-none">
+                              / {paddedTotales}
+                            </span>
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-[#ff3d1f] mt-1">
+                              cupones restantes
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mt-4">
+                          <div className="w-full h-2 bg-white/10 overflow-hidden relative rounded-full">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${progressPercentage}%` }}
+                              transition={{ duration: 1.2, ease: 'easeInOut' }}
+                              className="h-full bg-gradient-to-r from-red-700 via-[#ff3d1f] to-amber-400"
+                              style={{ willChange: 'width' }}
+                            />
+                          </div>
+                          <div className="flex justify-between text-[10px] font-mono text-zinc-400 mt-1.5">
+                            <span>{cupos_restantes} restantes</span>
+                            <span>{Math.round(progressPercentage)}% disponible</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Expiration Note */}
+                      <div className="flex items-center gap-2 text-[11px] font-mono text-amber-200/80 bg-amber-900/10 border border-amber-600/20 px-3 py-2">
+                        <Clock className="w-3.5 h-3.5 text-[#ff3d1f] shrink-0" />
+                        <span>Cupones limitados válidos para hoy</span>
+                      </div>
+
+                      {/* Action Button */}
+                      <div className="pt-2">
+                        <button
+                          type="button"
+                          onClick={handleClaim}
+                          disabled={isUpdating || isSoldOut}
+                          className="group relative w-full py-4 sm:py-5 px-6 overflow-hidden transition-all duration-300 bg-gradient-to-r from-red-700 via-[#ff3d1f] to-orange-500 hover:brightness-110 text-white shadow-xl shadow-[#ff3d1f]/25 border border-[#ff3d1f]/70 active:scale-[0.99] cursor-pointer"
+                        >
+                          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 pointer-events-none" />
+                          <span className="relative z-10 flex items-center justify-center gap-2.5 font-display text-xs sm:text-sm font-bold uppercase tracking-[0.25em]">
+                            {isUpdating ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>Asegurando tu cupón...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-4 h-4 fill-white shrink-0" />
+                                <span>Obtener mi cupón en WhatsApp</span>
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                              </>
+                            )}
+                          </span>
+                        </button>
+
+                        <p className="text-center text-[10px] font-mono text-zinc-500 mt-2.5">
+                          Genera tu código único al instante y abre WhatsApp en una nueva pestaña
+                        </p>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    /* Sold out state con aviso de sincronización en tiempo real */
+                    <motion.div
+                      key="soldout"
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="flex flex-col items-center justify-center py-8 px-4 text-center border border-white/10 bg-white/[0.02]"
+                    >
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-950/40 border border-red-500/30 rounded-full mb-3">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                        <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-red-300 font-bold">
+                          Cupos Agotados por Hoy
+                        </span>
+                      </div>
+
+                      <h4 className="font-display font-black text-2xl sm:text-3xl text-white uppercase tracking-tight mb-2">
+                        Se terminaron los cupos
+                      </h4>
+
+                      <p className="text-zinc-400 font-serif text-sm max-w-sm mb-4 leading-relaxed">
+                        Todos los cupones para esta jornada han sido reclamados. Si nuestro equipo habilita nuevos cupos, esta sección se actualizará automáticamente en vivo.
+                      </p>
+
+                      <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-400 mb-5 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                        <RefreshCw className="w-3 h-3 text-[#ff3d1f] animate-spin" style={{ animationDuration: '4s' }} />
+                        <span>Sincronizando en vivo cada 15s</span>
+                      </div>
+
+                      <a
+                        href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa!%20Quisiera%20consultar%20si%20habr%C3%A1%20nuevos%20cupones%20disponibles%20hoy."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-5 py-2.5 border border-white/20 text-xs font-mono text-zinc-300 hover:text-white hover:border-[#ff3d1f] transition-colors rounded-sm"
+                      >
+                        Consultar por WhatsApp
+                      </a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               )}
-            </span>
-          </button>
-        </div>
-      </motion.div>
+
+            </div>
+
+          </div>
+        </motion.div>
+
+      </div>
     </section>
   );
 }

@@ -2,12 +2,27 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Flame } from 'lucide-react';
 
+function getEcuadorHour() {
+  try {
+    const formatter = new Intl.DateTimeFormat('es-EC', {
+      timeZone: 'America/Guayaquil',
+      hour: 'numeric',
+      hour12: false,
+    });
+    const parts = formatter.formatToParts(new Date());
+    const hourPart = parts.find((p) => p.type === 'hour');
+    return hourPart ? parseInt(hourPart.value, 10) : new Date().getHours();
+  } catch (e) {
+    return new Date().getHours();
+  }
+}
+
 function useIsOpenNow() {
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     const check = () => {
-      const now = new Date();
-      setIsOpen([0, 4, 5, 6].includes(now.getDay()) && now.getHours() >= 17 && now.getHours() < 23);
+      const hour = getEcuadorHour();
+      setIsOpen(hour >= 11 && hour < 23);
     };
     check();
     const id = setInterval(check, 60_000);
@@ -116,12 +131,12 @@ export default function HeroElegante() {
         initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1.3, duration: 1, ease: [0.25, 1, 0.5, 1] }}
-        className="hidden lg:flex absolute left-8 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-6"
+        className="hidden xl:flex absolute top-28 sm:top-32 left-6 2xl:left-10 z-20 flex-col items-center gap-4 pointer-events-none select-none"
       >
-        <span className="text-[10px] tracking-[0.45em] text-zinc-500 uppercase [writing-mode:vertical-rl] rotate-180 font-display">
-          Est. Ibarra · Cortes al Carbón
+        <span className="text-[10px] 2xl:text-[11px] font-mono tracking-[0.3em] text-[#ff3d1f] uppercase [writing-mode:vertical-rl] rotate-180 drop-shadow-md">
+          CAPÍTULO 01 // EL ORIGEN
         </span>
-        <span className="w-px h-24 bg-gradient-to-b from-[#ff3d1f]/70 to-transparent" />
+        <span className="w-px h-16 2xl:h-20 bg-gradient-to-b from-[#ff3d1f]/60 to-transparent" />
       </motion.div>
 
       <motion.div
@@ -129,10 +144,10 @@ export default function HeroElegante() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
-        className="hidden md:flex absolute top-28 right-8 lg:right-16 z-20 items-center gap-4 text-zinc-500"
+        className="hidden md:flex absolute top-28 right-8 lg:right-16 z-20 items-center gap-4 text-zinc-400"
       >
         <span className="text-[10px] tracking-[0.4em] uppercase font-display">Capítulo</span>
-        <span className="text-xs tracking-[0.3em] font-display text-[#ff3d1f]">01 / 05</span>
+        <span className="text-xs tracking-[0.3em] font-display text-[#ff3d1f]">01 / 06</span>
       </motion.div>
 
       <motion.div
@@ -147,7 +162,7 @@ export default function HeroElegante() {
               <Flame aria-hidden="true" className="w-3.5 h-3.5 text-[#ff3d1f]" />
             </span>
             <span className="text-[10px] sm:text-[11px] tracking-[0.4em] text-orange-200/90 uppercase font-display">
-              Steakhouse de Ibarra · Fuego de Leña
+              Chancho a la Barbosa · Ibarra, Ecuador
             </span>
           </div>
         </motion.div>
@@ -170,19 +185,19 @@ export default function HeroElegante() {
 
           <motion.p
             variants={reveal}
-            className="md:col-span-6 text-zinc-300/90 text-sm sm:text-base font-light leading-[1.9] tracking-[0.06em] uppercase font-display max-w-xl"
+            className="md:col-span-6 text-stone-300 text-sm sm:text-base md:text-lg font-normal leading-relaxed tracking-normal font-sans max-w-xl"
           >
-            Carbón, leña y paciencia. Cortes que se eligen uno a uno, se cocinan sin prisa y se sirven sin adornos. En{' '}
-            <span className="text-white">Casa Barbosa</span> el plato habla solo.
+            Carbón, leña y paciencia. Cada pieza se elige, se cocina sin prisa y se sirve sin adornos. En{' '}
+            <span className="text-white font-semibold">Casa Barbosa</span> el chancho no necesita más.
           </motion.p>
 
-          <motion.div variants={spring} className="md:col-span-4 flex md:justify-end">
+          <motion.div variants={spring} className="md:col-span-4 flex md:justify-end items-center gap-3 sm:gap-4 flex-wrap">
             <a
-              href="https://wa.me/593984180801?text=Hola%20Casa%20Barbosa!%20Quiero%20hacer%20una%20reserva."
+              href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa!%20Quiero%20hacer%20una%20reserva."
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Reservar mesa por WhatsApp"
-              className="group relative inline-flex items-center gap-5 pl-7 pr-3 py-3 rounded-full bg-white text-black font-display font-bold tracking-[0.25em] uppercase text-xs sm:text-sm overflow-hidden transition-[padding,transform] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] hover:pl-9 active:scale-[0.98]"
+              className="group relative inline-flex items-center gap-4 sm:gap-5 pl-6 sm:pl-7 pr-3 py-3 rounded-full bg-white text-black font-display font-bold tracking-[0.2em] uppercase text-xs sm:text-sm overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] hover:pl-8 active:scale-[0.98] shadow-xl"
             >
               <span className="relative z-10">Reserva tu mesa</span>
               <span className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-black text-white transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:rotate-45">
@@ -193,22 +208,33 @@ export default function HeroElegante() {
                 className="absolute inset-0 bg-gradient-to-r from-[#ff3d1f] to-red-700 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
               />
             </a>
+
+            <a
+              href="#menu"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/20 hover:border-[#ff3d1f] text-white hover:text-[#ff3d1f] font-display text-xs uppercase tracking-widest transition-all bg-white/[0.04] backdrop-blur-md"
+            >
+              Ver la Carta
+            </a>
           </motion.div>
         </div>
 
         <motion.div
           variants={spring}
-          className="mt-16 sm:mt-24 flex flex-wrap items-center gap-x-10 gap-y-3 text-[10px] sm:text-[11px] tracking-[0.4em] uppercase text-zinc-500 font-display"
+          className="mt-14 sm:mt-20 flex flex-wrap items-center gap-x-6 sm:gap-x-8 gap-y-2.5 text-[10px] sm:text-[11px] tracking-[0.35em] uppercase text-zinc-400 font-mono"
         >
           <span className="flex items-center gap-2">
             <span
               aria-hidden="true"
-              className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-[#ff3d1f] animate-pulse' : 'bg-zinc-600'}`}
+              className={`w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-400 animate-pulse' : 'bg-amber-500'}`}
             />
-            {isOpen ? 'Mesas abiertas' : 'Abrimos Jue — Dom'}
+            <span className={isOpen ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
+              {isOpen ? 'Mesas Abiertas Ahora' : 'Abre hoy a las 11:00 AM'}
+            </span>
           </span>
-          <span>Jue — Dom · 17:00 / 23:00</span>
-          <span className="hidden sm:inline">Ibarra · Imbabura</span>
+          <span className="hidden sm:inline text-zinc-600">·</span>
+          <span>Lunes a Domingo · 11:00 a 23:00</span>
+          <span className="hidden sm:inline text-zinc-600">·</span>
+          <span className="hidden sm:inline">El Olivo · Ibarra</span>
         </motion.div>
       </motion.div>
 
@@ -219,7 +245,7 @@ export default function HeroElegante() {
         transition={{ delay: 1.7, duration: 1 }}
         className="hidden md:flex absolute bottom-10 right-8 lg:right-20 z-20 items-center gap-3"
       >
-        <span className="text-[10px] tracking-[0.4em] uppercase text-zinc-500 font-display">Scroll</span>
+        <span className="text-[10px] tracking-[0.4em] uppercase text-zinc-400 font-display">Scroll</span>
         <motion.span
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}

@@ -7,6 +7,7 @@ import MenuPremium from '../components/MenuPremium.jsx';
 import FooterUbicacion from '../components/FooterUbicacion.jsx';
 import WhatsAppButton from '../components/WhatsAppButton.jsx';
 import ResenasPremium from '../components/ResenasPremium.jsx';
+import HistoriaTeaser from '../components/HistoriaTeaser.jsx';
 ---
 
 <html lang="es" class="scroll-smooth bg-[#040504]">
@@ -16,22 +17,64 @@ import ResenasPremium from '../components/ResenasPremium.jsx';
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Casa Barbosa | Steakhouse Premium en Ibarra</title>
-		<meta name="description" content="Chancho a la Barbosa al carbón y leña. Jueves a domingo, 17:00–23:00. Panamericana Norte, El Olivo, Ibarra, Ecuador." />
+		<meta name="description" content="Chancho a la Barbosa al carbón y leña. Todos los días, 11:00–23:00. Panamericana Norte, El Olivo, Ibarra, Ecuador." />
+
+		<link rel="canonical" href="https://casabarbosa.ec/" />
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<meta name="theme-color" content="#040504" />
 
 		<meta property="og:type"        content="restaurant" />
 		<meta property="og:site_name"   content="Casa Barbosa" />
 		<meta property="og:title"       content="Casa Barbosa | Steakhouse Premium en Ibarra" />
-		<meta property="og:description" content="Chancho a la Barbosa al carbón y leña. Jueves a domingo, 17:00–23:00. Panamericana Norte, El Olivo, Ibarra, Ecuador." />
+		<meta property="og:description" content="Chancho a la Barbosa al carbón y leña. Todos los días, 11:00–23:00. Panamericana Norte, El Olivo, Ibarra, Ecuador." />
 		<meta property="og:url"         content="https://casabarbosa.ec/" />
-		<meta property="og:image"       content="https://casabarbosa.ec/og-image.jpg" />
+		<meta property="og:image"       content="https://casabarbosa.ec/logo-barbosa.png" />
 		<meta property="og:image:width"  content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:locale"      content="es_EC" />
 
 		<meta name="twitter:card"        content="summary_large_image" />
 		<meta name="twitter:title"       content="Casa Barbosa | Steakhouse Premium en Ibarra" />
-		<meta name="twitter:description" content="Chancho a la Barbosa al carbón y leña. Jueves a domingo, 17:00–23:00. El Olivo, Ibarra." />
-		<meta name="twitter:image"       content="https://casabarbosa.ec/og-image.jpg" />
+		<meta name="twitter:description" content="Chancho a la Barbosa al carbón y leña. Todos los días, 11:00–23:00. El Olivo, Ibarra." />
+		<meta name="twitter:image"       content="https://casabarbosa.ec/logo-barbosa.png" />
+
+		<!-- Schema.org JSON-LD para Google Search & Maps -->
+		<script type="application/ld+json" is:inline>
+		{
+			"@context": "https://schema.org",
+			"@type": "Restaurant",
+			"name": "Casa Barbosa",
+			"alternateName": "Casa Barbosa Steakhouse Ibarra",
+			"image": "https://casabarbosa.ec/logo-barbosa.png",
+			"url": "https://casabarbosa.ec/",
+			"telephone": "+593984085851",
+			"priceRange": "$$",
+			"servesCuisine": ["Ecuadorian", "Steakhouse", "Barbecue", "Chancho a la Barbosa"],
+			"address": {
+				"@type": "PostalAddress",
+				"streetAddress": "Panamericana Norte E35 1 C3 y Luis Fernando Madera, sector El Olivo",
+				"addressLocality": "Ibarra",
+				"addressRegion": "Imbabura",
+				"postalCode": "100105",
+				"addressCountry": "EC"
+			},
+			"geo": {
+				"@type": "GeoCoordinates",
+				"latitude": 0.3661,
+				"longitude": -78.1121
+			},
+			"openingHoursSpecification": [
+				{
+					"@type": "OpeningHoursSpecification",
+					"dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+					"opens": "11:00",
+					"closes": "23:00"
+				}
+			],
+			"menu": "https://casabarbosa.ec/#menu",
+			"acceptsReservations": "True"
+		}
+		</script>
 
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +86,7 @@ import ResenasPremium from '../components/ResenasPremium.jsx';
 			<HeroElegante client:load />
 			<ScarcityOffer client:visible />
 			<MenuPremium client:visible />
+			<HistoriaTeaser client:visible />
 			<ResenasPremium client:visible />
 		</main>
 		<FooterUbicacion client:visible />

@@ -70,7 +70,7 @@ export default function WhatsAppButton() {
 
       <motion.a
         ref={ref}
-        href="https://wa.me/593984180801"
+        href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa,%20deseo%20reservar%20una%20mesa."
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contactar por WhatsApp"

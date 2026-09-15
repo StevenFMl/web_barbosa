@@ -1,0 +1,21 @@
+{
+  "name": "Casa Barbosa | Steakhouse & Chancho a la Barbosa",
+  "short_name": "Casa Barbosa",
+  "description": "Chancho a la Barbosa al carbón y leña en El Olivo, Ibarra.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#040504",
+  "theme_color": "#040504",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/logo-barbosa.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
