@@ -205,12 +205,12 @@ export default function ScarcityOffer() {
   }, []);
 
   const handleShareFriend = () => {
-    const shareText = `¡Oye! En Casa Barbosa tienen cupones de cortesía activos hoy para su chancho a la Barbosa y asados al carbón. Quedan pocos cupos (1 cupón por persona). Reclama el tuyo aquí antes de que se agoten: https://casabarbosa.ec/#oportunidad`;
+    const shareText = `¡Oye! En Casa Barbosa tienen cupones de cortesía activos hoy para su chancho a la Barbosa y asados al carbón. Quedan pocos cupos (1 cupón por persona). Reclama el tuyo aquí antes de que se agoten: https://casalabarbosa.com/#oportunidad`;
     if (typeof navigator !== 'undefined' && navigator.share) {
       navigator.share({
         title: 'Casa Barbosa - Cupón de Cortesía',
         text: shareText,
-        url: 'https://casabarbosa.ec/#oportunidad',
+        url: 'https://casalabarbosa.com/#oportunidad',
       }).catch(() => {
         // Fallback a portapapeles si cancela
       });

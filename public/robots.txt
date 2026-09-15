@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://casabarbosa.ec/sitemap.xml
+Sitemap: https://casalabarbosa.com/sitemap.xml
