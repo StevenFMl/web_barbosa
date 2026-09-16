@@ -62,57 +62,46 @@ export default function ScarcityOffer() {
   const [showPolicies, setShowPolicies] = useState(false);
   const lastClaimTimeRef = useRef(0);
 
-  // Calcula la expiración: hoy a las 23:00 (cierre del restaurante)
-  const calculateExpirationTimestamp = (baseTime = Date.now()) => {
-    const d = new Date(baseTime);
-    d.setHours(23, 0, 0, 0);
-    // Si se genera pasada las 22:30, concede 2 horas de margen
-    if (baseTime >= d.getTime()) {
-      d.setTime(baseTime + 2 * 60 * 60 * 1000);
-    }
-    return d.getTime();
-  };
-
   const formatEcuadorTime = (timestamp) => {
-    if (!timestamp) return 'Jornada anterior';
+    if (!timestamp) return '';
     try {
       return new Intl.DateTimeFormat('es-EC', {
         timeZone: 'America/Guayaquil',
         day: '2-digit',
         month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
+        year: 'numeric',
       }).format(new Date(timestamp));
     } catch (e) {
       return new Date(timestamp).toLocaleDateString();
     }
   };
 
-  // Función de evaluación estricta de vigencia del cupón
-  const evaluateCoupon = (parsed) => {
+  // El cupón es VÁLIDO mientras la campaña promocional continúe activa.
+  // Caduca cuando el administrador cambia la promoción en Google Sheets.
+  const evaluateCoupon = (parsed, activeTitle = '') => {
     if (!parsed || !parsed.code) return { status: null };
-    const now = Date.now();
-    const claimedDate = parsed.claimedAt ? new Date(parsed.claimedAt).toDateString() : null;
-    const todayDate = new Date().toDateString();
 
-    const isPastExpiresAt = parsed.expiresAt ? now > parsed.expiresAt : false;
-    const isPastDay = claimedDate ? claimedDate !== todayDate : false;
+    const couponPromo = (parsed.promoTitulo || parsed.titulo || '').trim().toLowerCase();
+    const currentPromo = (activeTitle || offerData?.titulo || '').trim().toLowerCase();
 
-    if (isPastExpiresAt || isPastDay) {
+    // Si ya cargó la promo actual y difiere del cupón que tenía el usuario:
+    if (couponPromo && currentPromo && couponPromo !== currentPromo) {
       return {
         status: 'EXPIRED',
         code: parsed.code,
+        promoTitulo: parsed.promoTitulo || parsed.titulo || 'Promoción anterior',
+        currentPromo: activeTitle || offerData?.titulo || 'Nueva promoción',
         claimedAt: parsed.claimedAt,
-        expiresAt: parsed.expiresAt || (parsed.claimedAt ? calculateExpirationTimestamp(parsed.claimedAt) : now),
-        reason: isPastDay ? 'Jornada anterior finalizada' : 'Límite de horario del día concluido (cierre 23:00)',
+        reason: 'Campaña promocional concluida en Casa Barbosa',
       };
     }
 
+    // Mientras la campaña siga siendo la misma, el cupón sigue 100% ACTIVO
     return {
       status: 'ACTIVE',
       code: parsed.code,
+      promoTitulo: parsed.promoTitulo || parsed.titulo || 'Cortesía Barbosa',
       claimedAt: parsed.claimedAt,
-      expiresAt: parsed.expiresAt || calculateExpirationTimestamp(parsed.claimedAt),
       targetUrl: parsed.targetUrl || createWhatsAppUrl(parsed.code, parsed.promoTitulo || parsed.titulo || 'Cortesía Barbosa'),
     };
   };
@@ -130,31 +119,35 @@ export default function ScarcityOffer() {
       }
 
       if (data && data.titulo) {
-        // DETECCIÓN INTELIGENTE DE CAMBIO EN GOOGLE SHEETS:
+        // DETECCIÓN DE CAMBIO DE CAMPAÑA PROMOCIONAL:
         try {
           const savedStr = localStorage.getItem('casa_barbosa_cupon_activo_v1');
           if (savedStr) {
             const saved = JSON.parse(savedStr);
             const savedTitle = (saved.promoTitulo || saved.titulo || '').trim().toLowerCase();
             const incomingTitle = (data.titulo || '').trim().toLowerCase();
-            const savedTotales = Number(saved.promoTotales) || 0;
-            const incomingTotales = Number(data.totales) || 0;
 
-            const isDifferentPromo = savedTitle && incomingTitle && savedTitle !== incomingTitle;
-            const isQuotaReloaded = savedTotales > 0 && incomingTotales > savedTotales;
-
-            if (isDifferentPromo || isQuotaReloaded) {
-              console.log('¡Nueva promoción o recarga en Google Sheets! Renovando...');
-              localStorage.removeItem('casa_barbosa_cupon_activo_v1');
-              setClaimedCode(null);
-              setCouponStatus(null);
-              setClaimUrl(null);
-              setExpiredDetails(null);
-              setDataKey(k => k + 1);
+            // Si el dueño cambió el título en el Excel a una nueva promo:
+            if (savedTitle && incomingTitle && savedTitle !== incomingTitle) {
+              console.log(`Campaña finalizada. El cupón era de "${saved.promoTitulo}" y la promo actual es "${data.titulo}".`);
+              setCouponStatus('EXPIRED');
+              setClaimedCode(saved.code);
+              setExpiredDetails({
+                code: saved.code,
+                promoTitulo: saved.promoTitulo || saved.titulo,
+                currentPromo: data.titulo,
+                claimedAt: saved.claimedAt,
+                reason: 'Campaña promocional concluida',
+              });
+            } else if (saved.code) {
+              // La promoción sigue vigente: se mantiene activo
+              setCouponStatus('ACTIVE');
+              setClaimedCode(saved.code);
+              setClaimUrl(saved.targetUrl || createWhatsAppUrl(saved.code, data.titulo));
             }
           }
         } catch (storageErr) {
-          console.warn('Error verificando versión de promoción:', storageErr);
+          console.warn('Error verificando cupón guardado:', storageErr);
         }
 
         setOfferData(prev => {
@@ -211,19 +204,21 @@ export default function ScarcityOffer() {
     const now = new Date();
     const dateFormatted = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
     const whatsappMsg = encodeURIComponent(
-      `¡Hola Casa Barbosa! Vengo de la web oficial y deseo validar mi cupón:\n\n🎟️ Código Único: *${code}*\n🎁 Promoción: *${promoTitle}*\n📅 Emisión: *${dateFormatted}* (Válido hoy hasta las 23:00)\n⚠️ Condición: 1 cupón por mesa en consumo de plato fuerte\n\n¡Por favor confirmar mi cupón para mi visita/pedido!`
+      `¡Hola Casa Barbosa! Vengo de la web oficial y deseo validar mi cupón:\n\n🎟️ Código Único: *${code}*\n🎁 Promoción: *${promoTitle}*\n📅 Reclamado: *${dateFormatted}* (Válido durante esta campaña)\n⚠️ Condición: 1 cupón por mesa en consumo de plato fuerte\n\n¡Por favor confirmar mi cupón para mi visita/pedido!`
     );
     return `https://wa.me/${phone}?text=${whatsappMsg}`;
   };
 
-  // 1. Al cargar, verificar estado del cupón (Activo o Caducado)
+  // 1. Al cargar, verificar estado del cupón (Vigente o de Campaña Concluida)
   useEffect(() => {
+    let currentTitle = '';
     try {
       const cachedOffer = localStorage.getItem('casa_barbosa_offer_cache');
       if (cachedOffer) {
         const parsedOffer = JSON.parse(cachedOffer);
         if (parsedOffer && parsedOffer.titulo) {
           setOfferData(parsedOffer);
+          currentTitle = parsedOffer.titulo;
         }
       }
     } catch (e) {}
@@ -232,7 +227,7 @@ export default function ScarcityOffer() {
       const saved = localStorage.getItem('casa_barbosa_cupon_activo_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
-        const result = evaluateCoupon(parsed);
+        const result = evaluateCoupon(parsed, currentTitle);
         if (result.status === 'EXPIRED') {
           setCouponStatus('EXPIRED');
           setClaimedCode(result.code);
@@ -339,7 +334,6 @@ export default function ScarcityOffer() {
       const nuevoCodigo = generateUniqueCouponCode();
       const currentTitle = offerData?.titulo || 'Cortesía de la Casa';
       const targetUrl = createWhatsAppUrl(nuevoCodigo, currentTitle);
-      const expiresAt = calculateExpirationTimestamp(now);
 
       // 2. ABRIR EN OTRA PESTAÑA DE INMEDIATO (Síncrono en el gesto de clic para cero bloqueos de navegador)
       let newTab = null;
@@ -349,7 +343,7 @@ export default function ScarcityOffer() {
         console.warn('Pop-up blocker detectado, botón disponible en pantalla');
       }
 
-      // 3. Guardar inmediatamente en localStorage con la firma de la promoción y fecha de caducidad
+      // 3. Guardar inmediatamente en localStorage con la firma de la promoción activa
       try {
         localStorage.setItem(
           'casa_barbosa_cupon_activo_v1',
@@ -358,7 +352,6 @@ export default function ScarcityOffer() {
             promoTitulo: currentTitle,
             promoTotales: offerData?.cupos_totales || 20,
             claimedAt: now,
-            expiresAt: expiresAt,
             targetUrl: targetUrl,
           })
         );
@@ -547,7 +540,7 @@ export default function ScarcityOffer() {
                     <span className="w-4 h-4 rounded-full bg-[#ff3d1f]/20 border border-[#ff3d1f]/50 flex items-center justify-center shrink-0">
                       <Check className="w-2.5 h-2.5 text-[#ff3d1f]" strokeWidth={3} />
                     </span>
-                    <span>Vigencia diaria: Válido exclusivamente hoy hasta las 23:00 (cierre)</span>
+                    <span>Vigencia por campaña: Válido mientras continúe activa esta promoción en la web</span>
                   </div>
                 </div>
 
@@ -589,13 +582,13 @@ export default function ScarcityOffer() {
                             <strong className="text-zinc-200">Pantalla en Vivo (Prohibido Capturas):</strong> El comensal debe mostrar esta página web abierta con el código en pantalla o el chat de WhatsApp oficial verificado. No se aceptan capturas de pantalla, fotos reenviadas ni cupones de terceros.
                           </li>
                           <li>
-                            <strong className="text-zinc-200">Caducidad Diaria (23:00):</strong> Todo cupón emitido vence automáticamente al concluir la jornada (23:00). Al día siguiente el código aparece como <em>CADUCADO</em> y no podrá ser canjeado.
+                            <strong className="text-zinc-200">Vigencia por Campaña:</strong> El cupón permanece activo durante todos los días que esta promoción siga vigente en Casa Barbosa. Si la administración finaliza la campaña o la sustituye por una nueva oferta en la web, los cupones anteriores caducan automáticamente.
                           </li>
                           <li>
                             <strong className="text-zinc-200">No Acumulable:</strong> No es canjeable por dinero en efectivo ni acumulable con otros descuentos, promociones o eventos especiales.
                           </li>
                           <li>
-                            <strong className="text-zinc-200">Disponibilidad:</strong> Promoción sujeta a los cupos diarios asignados en el sistema de Casa Barbosa.
+                            <strong className="text-zinc-200">Disponibilidad:</strong> Promoción sujeta a los cupos asignados en el sistema de Casa Barbosa.
                           </li>
                         </ol>
                       </motion.div>
@@ -620,7 +613,7 @@ export default function ScarcityOffer() {
             {/* TICKET STUB / LIVE COUNTER & CLAIM ACTION (Right 5 cols on desktop) */}
             <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-black/40 relative">
               
-              {/* CASO 1: CUPÓN CADUCADO / EXPIRADO */}
+              {/* CASO 1: CUPÓN CADUCADO (Campaña finalizada) */}
               {couponStatus === 'EXPIRED' ? (
                 <div className="flex flex-col justify-between h-full py-2 space-y-4">
                   <div className="space-y-4">
@@ -632,7 +625,7 @@ export default function ScarcityOffer() {
                         </span>
                       </div>
                       <span className="text-[10px] font-mono text-red-300 bg-red-950/80 border border-red-500/40 px-2.5 py-0.5 rounded-full font-bold">
-                        Vencido
+                        Campaña Finalizada
                       </span>
                     </div>
 
@@ -645,7 +638,7 @@ export default function ScarcityOffer() {
                       </div>
                       <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-950/60 border border-red-500/30 text-[11px] font-mono text-red-300 rounded-sm">
                         <Clock className="w-3.5 h-3.5 text-red-400" />
-                        <span>Vigencia finalizada: {formatEcuadorTime(expiredDetails?.expiresAt)}</span>
+                        <span>Campaña concluida: "{expiredDetails?.promoTitulo || 'Promoción anterior'}"</span>
                       </div>
                     </div>
 
@@ -655,10 +648,10 @@ export default function ScarcityOffer() {
                         <span>Motivo de Caducidad</span>
                       </div>
                       <p className="text-zinc-300 font-serif text-xs leading-relaxed">
-                        Este cupón superó el horario límite de su jornada. Los cupones se renuevan diariamente para garantizar producto fresco y disponibilidad justa a todos los clientes.
+                        Esta campaña promocional ha finalizado en Casa Barbosa y fue sustituida por una nueva oferta. Los cupones de promociones concluidas ya no son válidos para canje.
                       </p>
                       <p className="text-red-300/90 font-serif text-xs leading-relaxed border-t border-white/5 pt-2 italic">
-                        ⚠️ Por política del restaurante, el personal de atención no aceptará cupones caducados ni capturas de pantalla de días anteriores.
+                        ⚠️ Por política del restaurante, el personal no aceptará cupones de promociones finalizadas ni capturas de campañas pasadas.
                       </p>
                     </div>
                   </div>
@@ -670,26 +663,26 @@ export default function ScarcityOffer() {
                       className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-display text-xs uppercase tracking-[0.2em] font-semibold transition-all rounded-sm cursor-pointer active:scale-[0.99]"
                     >
                       <RefreshCw className="w-4 h-4 text-[#ff3d1f]" />
-                      <span>Descartar y consultar cupos de hoy</span>
+                      <span>Descartar y ver nueva promoción</span>
                     </button>
                     <p className="text-center text-[10px] font-mono text-zinc-500">
-                      Si aún quedan cupos para la jornada de hoy, podrás solicitar uno nuevo válido
+                      Podrás obtener tu cupón para la promoción actualmente activa
                     </p>
                   </div>
                 </div>
               ) : couponStatus === 'ACTIVE' && claimedCode ? (
-                /* CASO 2: CUPÓN ACTIVO HOY */
+                /* CASO 2: CUPÓN ACTIVO DURANTE ESTA CAMPAÑA */
                 <div className="flex flex-col justify-between h-full py-2 space-y-4">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-emerald-400">
                         <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
                         <span className="font-display font-black text-xs uppercase tracking-[0.25em] text-emerald-400">
-                          Cupón Activo Hoy
+                          Cupón Activo
                         </span>
                       </div>
                       <span className="text-[10px] font-mono text-emerald-300 bg-emerald-950/70 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-bold">
-                        Válido hasta 23:00
+                        Promoción Vigente
                       </span>
                     </div>
 
@@ -719,7 +712,7 @@ export default function ScarcityOffer() {
                       <ul className="text-stone-300 font-serif text-xs space-y-1 pl-1">
                         <li>• <strong>1 cupón por mesa o cuenta</strong> en consumo de plato fuerte.</li>
                         <li>• Presentar <strong>esta pantalla activa en vivo</strong> al ordenar (no capturas).</li>
-                        <li>• Vence <strong>hoy a las 23:00</strong> (cierre de atención).</li>
+                        <li>• Válido <strong>mientras continúe activa</strong> esta promoción ({titulo}).</li>
                       </ul>
                     </div>
 
