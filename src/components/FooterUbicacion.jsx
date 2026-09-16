@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { SITE_CONFIG } from '../config/siteConfig';
 import { 
   MapPin, 
   Clock, 
@@ -155,7 +156,7 @@ export default function FooterUbicacion() {
 
             <div className="flex flex-col gap-2 pt-4 border-t border-white/10 mt-2">
               <a
-                href="https://www.google.com/maps/dir/?api=1&destination=0.3617300704558116,-78.11191105673959"
+                href={SITE_CONFIG.location.googleMapsDirUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-sm bg-white/5 hover:bg-[#ff3d1f] text-white hover:text-black font-display text-[11px] font-bold uppercase tracking-wider transition-all border border-white/10 hover:border-[#ff3d1f]"
@@ -246,10 +247,10 @@ export default function FooterUbicacion() {
               </h3>
 
               <a
-                href="tel:+593984085851"
+                href={`tel:+${SITE_CONFIG.contact.phoneRaw}`}
                 className="block text-xl font-bold font-mono text-white hover:text-[#ff3d1f] transition-colors mb-2 tracking-wide"
               >
-                +593 98 408 5851
+                {SITE_CONFIG.contact.phoneFormatted}
               </a>
 
               <p className="text-zinc-300 font-serif text-sm leading-relaxed mb-4">
@@ -259,7 +260,7 @@ export default function FooterUbicacion() {
 
             <div className="flex flex-col gap-2 pt-4 border-t border-white/10 mt-2">
               <a
-                href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa,%20deseo%20hacer%20una%20reserva%20o%20pedido"
+                href={`https://wa.me/${SITE_CONFIG.contact.phoneRaw}?text=${encodeURIComponent('Hola Casa Barbosa, deseo hacer una reserva o pedido')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-sm bg-[#ff3d1f] hover:bg-white text-black font-display text-[11px] font-bold uppercase tracking-wider transition-all"
@@ -268,7 +269,7 @@ export default function FooterUbicacion() {
                 Escribir al WhatsApp
               </a>
               <a
-                href="tel:+593984085851"
+                href={`tel:+${SITE_CONFIG.contact.phoneRaw}`}
                 className="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-sm bg-transparent hover:bg-white/5 text-zinc-400 hover:text-white font-mono text-[11px] transition-colors"
               >
                 <Phone className="w-3 h-3 text-[#ff3d1f]" />
@@ -341,7 +342,7 @@ export default function FooterUbicacion() {
 
           {/* Bottom Route Shortcut */}
           <a
-            href="https://www.google.com/maps/dir/?api=1&destination=0.3617300704558116,-78.11191105673959"
+            href={SITE_CONFIG.location.googleMapsDirUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Abrir ruta a Casa Barbosa en Google Maps"
@@ -352,7 +353,7 @@ export default function FooterUbicacion() {
           </a>
 
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d498.71735074616873!2d-78.11191105673959!3d0.3617300704558116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2a3d8443549e5f%3A0x44b531f91e465e6f!2sChancho%20a%20la%20Barbosa!5e0!3m2!1ses!2sec!4v1780275616896!5m2!1ses!2sec"
+            src={SITE_CONFIG.location.googleMapsEmbedUrl}
             width="100%"
             height="100%"
             style={{ border: 0 }}
@@ -386,7 +387,7 @@ export default function FooterUbicacion() {
           {/* Social Links */}
           <div className="flex items-center gap-3">
             <a
-              href="https://www.instagram.com/casalabarbosa/"
+              href={SITE_CONFIG.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram oficial @casalabarbosa"
@@ -395,7 +396,7 @@ export default function FooterUbicacion() {
               <Instagram className="w-4 h-4 transition-transform group-hover:scale-110" />
             </a>
             <a
-              href="https://wa.me/593984085851"
+              href={SITE_CONFIG.social.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp oficial Casa Barbosa"
@@ -404,7 +405,7 @@ export default function FooterUbicacion() {
               <MessageCircle className="w-4 h-4 transition-transform group-hover:scale-110" />
             </a>
             <a
-              href="https://www.facebook.com/chanchobarbosaibarra"
+              href={SITE_CONFIG.social.facebook}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook Casa Barbosa"
@@ -413,7 +414,7 @@ export default function FooterUbicacion() {
               <Facebook className="w-4 h-4 transition-transform group-hover:scale-110" />
             </a>
             <a
-              href="https://www.tiktok.com/@casaalabarbosa"
+              href={SITE_CONFIG.social.tiktok}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok Casa Barbosa"

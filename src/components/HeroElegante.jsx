@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Flame } from 'lucide-react';
+import { getWhatsAppUrl } from '../config/siteConfig';
 
 function getEcuadorHour() {
   try {
@@ -89,7 +90,7 @@ export default function HeroElegante() {
     >
       <div className="absolute inset-0 z-0">
         <motion.img
-          src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1920&auto=format&fit=crop"
+          src="/images/hero-bg.webp"
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -193,7 +194,7 @@ export default function HeroElegante() {
 
           <motion.div variants={spring} className="md:col-span-4 flex md:justify-end items-center gap-3 sm:gap-4 flex-wrap">
             <a
-              href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa!%20Quiero%20hacer%20una%20reserva."
+              href={getWhatsAppUrl('Hola Casa Barbosa! Quiero hacer una reserva.')}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Reservar mesa por WhatsApp"

@@ -6,6 +6,7 @@ import {
   useMotionValueEvent,
 } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { SITE_CONFIG, getWhatsAppUrl } from '../config/siteConfig';
 
 const logoSrc = '/logo-barbosa.png';
 
@@ -140,7 +141,7 @@ export default function Navbar() {
 
             <li className="ml-4">
               <a
-                href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa,%20deseo%20reservar%20una%20mesa."
+                href={getWhatsAppUrl('Hola Casa Barbosa, deseo reservar una mesa.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative inline-flex items-center justify-center px-6 py-2.5 rounded-full text-sm font-semibold tracking-[0.25em] uppercase text-orange-100 border border-[#ff3d1f]/50 hover:border-[#ff3d1f] hover:text-white hover:bg-[#ff3d1f]/15 transition-[border-color,color,background-color] duration-150 overflow-hidden group"
@@ -226,7 +227,7 @@ export default function Navbar() {
               })}
 
               <motion.a
-                href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa,%20deseo%20reservar%20una%20mesa."
+                href={getWhatsAppUrl('Hola Casa Barbosa, deseo reservar una mesa.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsOpen(false)}

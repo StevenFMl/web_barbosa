@@ -11,6 +11,7 @@ import {
   HeartHandshake,
   BookOpen
 } from 'lucide-react';
+import { getWhatsAppUrl } from '../config/siteConfig';
 
 const METRICS = [
   {
@@ -407,7 +408,7 @@ export default function NosotrosSection() {
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <a
-              href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa!%20Deseo%20hacer%20una%20reserva%20de%20mesa."
+              href={getWhatsAppUrl('Hola Casa Barbosa! Deseo hacer una reserva de mesa.')}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Reservar mesa por WhatsApp"

@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Layers
 } from 'lucide-react';
+import { getWhatsAppUrl } from '../config/siteConfig';
 
 const menuItems = [
   {
@@ -523,7 +524,7 @@ export default function MenuPremium() {
               {/* Modal Sticky Bottom Action Footer */}
               <div className="shrink-0 p-3 sm:p-5 bg-[#070807] border-t border-white/10 flex flex-col sm:flex-row gap-2.5">
                 <a
-                  href={`https://wa.me/593984085851?text=${encodeURIComponent(`¡Hola Casa Barbosa! Me interesa ordenar o reservar el plato: *${selectedDish.name}* (${selectedDish.price}).`)}`}
+                  href={getWhatsAppUrl(`¡Hola Casa Barbosa! Me interesa ordenar o reservar el plato: *${selectedDish.name}* (${selectedDish.price}).`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 py-3.5 sm:py-4 px-6 bg-gradient-to-r from-red-700 via-[#ff3d1f] to-orange-500 hover:brightness-110 text-white font-display text-xs uppercase tracking-[0.25em] font-bold transition-all shadow-lg shadow-[#ff3d1f]/20 active:scale-[0.99]"
@@ -747,7 +748,7 @@ export default function MenuPremium() {
                   <span>PDF</span>
                 </a>
                 <a
-                  href={`https://wa.me/593984085851?text=${encodeURIComponent(`¡Hola Casa Barbosa! Estuve revisando la carta completa y deseo realizar un pedido o consulta.`)}`}
+                  href={getWhatsAppUrl(`¡Hola Casa Barbosa! Estuve revisando la carta completa y deseo realizar un pedido o consulta.`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-700 to-[#ff3d1f] text-white font-display text-[11px] uppercase tracking-wider font-bold hover:brightness-110 transition-all shadow-md"

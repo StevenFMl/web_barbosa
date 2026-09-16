@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { getWhatsAppUrl } from '../config/siteConfig';
 
 const MAGNETIC_SPRING = { stiffness: 260, damping: 16, mass: 0.5 };
 const MAGNETIC_RADIUS = 90;
@@ -16,6 +17,10 @@ export default function WhatsAppButton() {
   const y = useSpring(mouseY, MAGNETIC_SPRING);
 
   const handleMouseMove = (e) => {
+    // Desactivar cálculo magnético en dispositivos táctiles sin puntero fino
+    if (typeof window !== 'undefined' && !window.matchMedia('(pointer: fine)').matches) {
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -42,15 +47,7 @@ export default function WhatsAppButton() {
 
   return (
     <div
-      className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50"
-      style={{
-        width: 140,
-        height: 140,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'flex-end',
-        pointerEvents: 'none',
-      }}
+      className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 w-14 h-14 sm:w-[140px] sm:h-[140px] flex items-end justify-end pointer-events-none"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -70,7 +67,7 @@ export default function WhatsAppButton() {
 
       <motion.a
         ref={ref}
-        href="https://wa.me/593984085851?text=Hola%20Casa%20Barbosa,%20deseo%20reservar%20una%20mesa."
+        href={getWhatsAppUrl('Hola Casa Barbosa, deseo reservar una mesa.')}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contactar por WhatsApp"
