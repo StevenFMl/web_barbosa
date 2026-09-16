@@ -386,10 +386,10 @@ export default function FooterUbicacion() {
           {/* Social Links */}
           <div className="flex items-center gap-3">
             <a
-              href="https://www.instagram.com/sitiolabarbosa"
+              href="https://www.instagram.com/casalabarbosa/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Instagram oficial @sitiolabarbosa"
+              aria-label="Instagram oficial @casalabarbosa"
               className="w-10 h-10 rounded-full border border-white/20 hover:border-[#ff3d1f] flex items-center justify-center text-zinc-300 hover:text-white hover:bg-[#ff3d1f]/10 transition-all group"
             >
               <Instagram className="w-4 h-4 transition-transform group-hover:scale-110" />
@@ -404,7 +404,7 @@ export default function FooterUbicacion() {
               <MessageCircle className="w-4 h-4 transition-transform group-hover:scale-110" />
             </a>
             <a
-              href="https://www.facebook.com/casabarbosaibarra"
+              href="https://www.facebook.com/chanchobarbosaibarra"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook Casa Barbosa"
@@ -413,7 +413,7 @@ export default function FooterUbicacion() {
               <Facebook className="w-4 h-4 transition-transform group-hover:scale-110" />
             </a>
             <a
-              href="https://www.tiktok.com/@casabarbosaibarra"
+              href="https://www.tiktok.com/@casaalabarbosa"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok Casa Barbosa"

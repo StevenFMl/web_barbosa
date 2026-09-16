@@ -37,6 +37,26 @@ import WhatsAppButton from '../components/WhatsAppButton.jsx';
 		<meta name="twitter:description" content="Cuatro años cocinando chancho a la Barbosa al carbón y leña en Ibarra, Ecuador." />
 		<meta name="twitter:image"       content="https://casalabarbosa.com/logo-barbosa.png" />
 
+		<!-- Schema.org JSON-LD para Sobre Nosotros -->
+		<script type="application/ld+json" is:inline>
+		{
+			"@context": "https://schema.org",
+			"@type": "AboutPage",
+			"name": "Nuestra Historia | Casa Barbosa",
+			"url": "https://casalabarbosa.com/nosotros",
+			"mainEntity": {
+				"@type": "Restaurant",
+				"name": "Casa Barbosa",
+				"url": "https://casalabarbosa.com/",
+				"sameAs": [
+					"https://www.instagram.com/casalabarbosa/",
+					"https://www.facebook.com/chanchobarbosaibarra",
+					"https://www.tiktok.com/@casaalabarbosa"
+				]
+			}
+		}
+		</script>
+
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
