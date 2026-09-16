@@ -68,12 +68,12 @@ export const fetchCampaignFromScript = async (activeCode = null, signal = null) 
 
   if (!effectiveSignal && typeof AbortController !== 'undefined') {
     const controller = new AbortController();
-    timeoutId = setTimeout(() => controller.abort(), 8000);
+    timeoutId = setTimeout(() => controller.abort(), 30000);
     effectiveSignal = controller.signal;
   }
 
   try {
-    const response = await fetch(url, { signal: effectiveSignal });
+    const response = await fetch(url, { signal: effectiveSignal, redirect: 'follow' });
     return response;
   } finally {
     if (timeoutId) {

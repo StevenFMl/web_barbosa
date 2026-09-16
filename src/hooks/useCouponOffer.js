@@ -212,13 +212,10 @@ export function useCouponOffer() {
 
       // Proteger ante errores transitorios de Apps Script (404/bloqueo de Google Drive al editar Sheets)
       if (!response.ok) {
-        if (!hasLoggedNetworkErrorRef.current) {
-          console.warn(`Respuesta temporal de Apps Script (${response.status}). Reintentando...`);
-        }
         if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
         retryTimeoutRef.current = setTimeout(() => {
-          fetchOfferData(true);
-        }, 3500);
+          fetchOfferData(false);
+        }, 4500);
         return;
       }
 
@@ -227,13 +224,10 @@ export function useCouponOffer() {
       try {
         data = JSON.parse(textData);
       } catch (err) {
-        if (!hasLoggedNetworkErrorRef.current) {
-          console.warn('El servidor devolvió un formato no JSON temporal. Reintentando...');
-        }
         if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
         retryTimeoutRef.current = setTimeout(() => {
-          fetchOfferData(true);
-        }, 3500);
+          fetchOfferData(false);
+        }, 4500);
         return;
       }
 
@@ -394,8 +388,11 @@ export function useCouponOffer() {
         });
       }
     } catch (error) {
+      if (error?.name === 'AbortError') {
+        return;
+      }
       if (!hasLoggedNetworkErrorRef.current) {
-        console.warn('[POLLING] Conexión con Apps Script en espera (reintentando en segundo plano):', error.message);
+        console.warn('Conexión con Apps Script en espera:', error.message);
         hasLoggedNetworkErrorRef.current = true;
       }
     } finally {
@@ -417,8 +414,8 @@ export function useCouponOffer() {
       } catch (e) {}
     }
 
-    // Polling ultra-reactivo: cada 3.5s si hay cupón activo para canje en tiempo real, 8s para stock general
-    const pollInterval = (claimedCode && couponStatus !== 'REDEEMED') ? 3500 : 8000;
+    // Polling balanceado: cada 5s si hay cupón activo para canje en tiempo real, 10s para stock general
+    const pollInterval = (claimedCode && couponStatus !== 'REDEEMED') ? 5000 : 10000;
     fetchOfferData(true);
     const intervalId = setInterval(() => {
       fetchOfferData(false);
